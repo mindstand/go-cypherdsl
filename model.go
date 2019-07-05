@@ -1,7 +1,7 @@
 package go_cypherdsl
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -9,26 +9,26 @@ import (
 //v represents a vertex query
 type V struct{
 	//name of the vertex, omit if null
-	VarName *string
+	Name *string
 
 	//type of edge, omit if null
 	Type *string
 
 	//params for edge to map to, omit if null
-	Params map[string]interface{}
+	Params *Params
 }
 
 func (v *V) ToCypher() (string, error) {
 	//if nothing is specified, its just an empty vertex
-	if v.VarName == nil && v.Type == nil && v.Params == nil{
+	if v.Name == nil && v.Type == nil && (v.Params == nil || v.Params.IsEmpty()){
 		return "()", nil
 	}
 
 	str := "("
 
 	//specify variable name if its there
-	if v.VarName != nil{
-		str += *v.VarName
+	if v.Name != nil{
+		str += *v.Name
 	}
 
 	//specify type if its there
@@ -38,12 +38,7 @@ func (v *V) ToCypher() (string, error) {
 
 	//add params if its there
 	if v.Params != nil{
-		bytes, err := json.Marshal(v.Params)
-		if err != nil{
-			return "", err
-		}
-
-		str += " " + string(bytes)
+		str += v.Params.ToCypherMap()
 	}
 
 	str += ")"
@@ -57,10 +52,10 @@ type E struct {
 	Direction *Direction
 
 	//variable name for constraint queries, omit if null
-	VarName *string
+	Name *string
 
 	//names in the case that the edge is named or the query could be on multiple edges
-	Names []string
+	Types []string
 
 	//min jumps to the next node, if null omit
 	MinJumps *int
@@ -69,16 +64,19 @@ type E struct {
 	MaxJumps *int
 
 	//params for edges across individual jumps
-	Params map[string]interface{}
+	Params *Params
 }
 
 func (e *E) ToCypher() (string, error) {
-	if e.VarName == nil && (e.Names == nil || len(e.Names) == 0) && e.MinJumps == nil || e.MaxJumps == nil || e.Params == nil{
+	//check if the edge has anything specific
+	if e.Name == nil && (e.Types == nil || len(e.Types) == 0) && e.MinJumps == nil && e.MaxJumps == nil && (e.Params == nil || e.Params.IsEmpty()){
 		if e.Direction == nil{
 			return "--", nil
 		} else {
-			if *e.Direction == Incoming{
+			if *e.Direction == Incoming {
 				return "<--", nil
+			} else if *e.Direction == Any {
+				return "--", nil
 			} else {
 				return "-->", nil
 			}
@@ -87,16 +85,16 @@ func (e *E) ToCypher() (string, error) {
 
 	core := "["
 
-	if e.VarName != nil{
-		core += *e.VarName
+	if e.Name != nil{
+		core += *e.Name
 	}
 
-	if e.Names != nil && len(e.Names) != 0{
-		if len(e.Names) == 1{
-			core += ":" + e.Names[0]
+	if e.Types != nil && len(e.Types) != 0{
+		if len(e.Types) == 1{
+			core += ":" + e.Types[0]
 		} else {
 			q := ""
-			for _, v := range e.Names{
+			for _, v := range e.Types {
 				q += v + "|"
 			}
 
@@ -106,23 +104,27 @@ func (e *E) ToCypher() (string, error) {
 	}
 
 	if e.MinJumps != nil && e.MaxJumps != nil{
+		if (*e.MinJumps >= *e.MaxJumps) || *e.MinJumps <= 0 || *e.MaxJumps <= 0{
+			return "", errors.New("min jumps can not be greater than or equal to max jumps, also can not be less than 0")
+		}
 		q := fmt.Sprintf("*%v..%v", *e.MinJumps, *e.MaxJumps)
 		core += q
 	} else if e.MinJumps != nil{
+		if *e.MinJumps <= 0{
+			return "", errors.New("min jumps can not be less than 0")
+		}
 		q := fmt.Sprintf("*%v", *e.MinJumps)
 		core += q
-	} else {
+	} else if e.MaxJumps != nil{
+		if *e.MaxJumps <= 0{
+			return "", errors.New("max jumps can not be less than 0")
+		}
 		q := fmt.Sprintf("*1..%v", *e.MaxJumps)
 		core += q
 	}
 
 	if e.Params != nil{
-		bytes, err := json.Marshal(e.Params)
-		if err != nil{
-			return "", err
-		}
-
-		core += " " + string(bytes)
+		core += e.Params.ToCypherMap()
 	}
 
 	core += "]"

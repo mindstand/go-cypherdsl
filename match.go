@@ -1,6 +1,9 @@
 package go_cypherdsl
 
-import "errors"
+import (
+	"errors"
+	"strings"
+)
 
 type MatchBuilder struct {
 	//match steps are a linked list, store the first node for further iteration
@@ -11,6 +14,10 @@ type MatchBuilder struct {
 
 	//save all of the errors for the end
 	errors      []error
+}
+
+func Match() *MatchBuilder{
+	return &MatchBuilder{}
 }
 
 type VertexStep struct {
@@ -37,29 +44,77 @@ type matchStep struct {
 }
 
 func (m *matchStep) ToCypher() (string, error){
+	if m.P{
+		return "p=", nil
+	}
 
+	if m.OtherOperation != ""{
+		return m.OtherOperation, nil
+	}
+
+	if m.Edge != nil{
+		return m.Edge.ToCypher()
+	}
+
+	if m.Vertices != nil && len(m.Vertices) > 0{
+		str := ""
+
+		for _, v := range m.Vertices{
+			cyph, err := v.ToCypher()
+			if err != nil{
+				return "", err
+			}
+
+			str += cyph + ","
+		}
+
+		return strings.TrimSuffix(str, ","), nil
+	}
+
+	return "", errors.New("nothing in the match step was specified")
 }
 
-func (m *MatchBuilder) ToCypher() (string, error){
-	if m.firstStep == nil{
+func (m *MatchBuilder) ToCypher() (string, error) {
+	if m.firstStep == nil {
 		return "", errors.New("no steps process")
 	}
 
-	if len(m.errors) != 0{
+	if len(m.errors) != 0 {
 		errStr := ""
-		for _, err := range m.errors{
+		for _, err := range m.errors {
 			errStr += ";" + err.Error()
 		}
 
 		return "", errors.New("incurred one or many errors: " + errStr)
 	}
 
+	query := "match "
 
+	step := m.firstStep
 
-	return "", nil //todo this function
+	for {
+		if step == nil {
+			break
+		}
+
+		cypher, err := step.ToCypher()
+		if err != nil {
+			return "", err
+		}
+
+		query += cypher
+
+		step = step.Next
+	}
+
+	return query, nil
 }
 
-func (m *MatchBuilder) P() *PStep{
+func (v *VertexStep) ToCypher() (string, error){
+	return v.builder.ToCypher()
+}
+
+func (m *MatchBuilder) P() *MatchBuilder{
 	newStep := &matchStep{
 		P: true,
 	}
@@ -73,9 +128,7 @@ func (m *MatchBuilder) P() *PStep{
 		m.currentStep = newStep
 	}
 
-	return &PStep{
-		builder: m,
-	}
+	return m
 }
 
 func (p *PStep) V(vertices ...V) *MatchBuilder {
@@ -123,7 +176,7 @@ func (m *MatchBuilder) V(vertices ...V) *VertexStep {
 }
 
 
-func (e *EdgeStep) V(vertices ...V) *MatchBuilder{
+func (e *EdgeStep) V(vertices ...V) *VertexStep{
 	if vertices == nil || len(vertices) == 0{
 		if e.builder.errors == nil{
 			e.builder.errors = []error{}
@@ -138,7 +191,9 @@ func (e *EdgeStep) V(vertices ...V) *MatchBuilder{
 	e.builder.currentStep.Next = newStep
 	e.builder.currentStep = newStep
 
-	return e.builder
+	return &VertexStep{
+		builder: e.builder,
+	}
 }
 
 
