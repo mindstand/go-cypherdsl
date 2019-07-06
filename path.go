@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type MatchBuilder struct {
+type PathBuilder struct {
 	//match steps are a linked list, store the first node for further iteration
 	firstStep *matchStep
 
@@ -16,20 +16,20 @@ type MatchBuilder struct {
 	errors      []error
 }
 
-func Match() *MatchBuilder{
-	return &MatchBuilder{}
+func NewPath() *PathBuilder {
+	return &PathBuilder{}
 }
 
 type VertexStep struct {
-	builder *MatchBuilder
+	builder *PathBuilder
 }
 
 type EdgeStep struct {
-	builder *MatchBuilder
+	builder *PathBuilder
 }
 
 type PStep struct{
-	builder *MatchBuilder
+	builder *PathBuilder
 }
 
 type matchStep struct {
@@ -74,7 +74,7 @@ func (m *matchStep) ToCypher() (string, error){
 	return "", errors.New("nothing in the match step was specified")
 }
 
-func (m *MatchBuilder) ToCypher() (string, error) {
+func (m *PathBuilder) ToCypher() (string, error) {
 	if m.firstStep == nil {
 		return "", errors.New("no steps process")
 	}
@@ -88,7 +88,7 @@ func (m *MatchBuilder) ToCypher() (string, error) {
 		return "", errors.New("incurred one or many errors: " + errStr)
 	}
 
-	query := "match "
+	query := ""
 
 	step := m.firstStep
 
@@ -114,7 +114,7 @@ func (v *VertexStep) ToCypher() (string, error){
 	return v.builder.ToCypher()
 }
 
-func (m *MatchBuilder) P() *MatchBuilder{
+func (m *PathBuilder) P() *PathBuilder {
 	newStep := &matchStep{
 		P: true,
 	}
@@ -131,7 +131,7 @@ func (m *MatchBuilder) P() *MatchBuilder{
 	return m
 }
 
-func (p *PStep) V(vertices ...V) *MatchBuilder {
+func (p *PStep) V(vertices ...V) *PathBuilder {
 	if vertices == nil || len(vertices) == 0 {
 		if p.builder.errors == nil{
 			p.builder.errors = []error{}
@@ -149,7 +149,7 @@ func (p *PStep) V(vertices ...V) *MatchBuilder {
 	return p.builder
 }
 
-func (m *MatchBuilder) V(vertices ...V) *VertexStep {
+func (m *PathBuilder) V(vertices ...V) *VertexStep {
 	if vertices == nil || len(vertices) == 0{
 		if m.errors == nil{
 			m.errors = []error{}
