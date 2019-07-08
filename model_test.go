@@ -8,8 +8,8 @@ func TestV_ToCypher(t *testing.T) {
 	req := require.New(t)
 
 	empty := V{}
-	withVarName := V{Name: StrPtr("test_str")}
-	withVarNameAndType := V{Name: StrPtr("test_str"), Type:StrPtr("test_type")}
+	withVarName := V{Name: "test_str"}
+	withVarNameAndType := V{Name: "test_str", Type:"test_type"}
 
 	pms, err := ParamsFromMap(map[string]interface{}{
 		"test_var": "test",
@@ -17,8 +17,8 @@ func TestV_ToCypher(t *testing.T) {
 	req.Nil(err)
 
 	withAll := V{
-		Name:   StrPtr("test_str"),
-		Type:   StrPtr("test_type"),
+		Name:   "test_str",
+		Type:   "test_type",
 		Params: pms,
 	}
 
@@ -54,14 +54,14 @@ func TestE_ToCypher(t *testing.T) {
 	onlyDirectionAny := E{Direction: DirectionPtr(Any)}
 
 	//var types
-	varNameOnly := E{Name: StrPtr("var")}
-	varNameWithOneType := E{Name: StrPtr("var"), Types: []string{"test"}}
-	varWithManyTypes := E{Name: StrPtr("var"), Types: []string{"test1", "test2"}}
+	varNameOnly := E{Name: "var"}
+	varNameWithOneType := E{Name: "var", Types: []string{"test"}}
+	varWithManyTypes := E{Name: "var", Types: []string{"test1", "test2"}}
 
 	//jumps
-	jumpsMinMax := E{MinJumps: IntPtr(2), MaxJumps: IntPtr(5)}
-	jumpsMin := E{MinJumps: IntPtr(2)}
-	jumpsMax := E{MaxJumps: IntPtr(3)}
+	jumpsMinMax := E{MinJumps: 2, MaxJumps: 5}
+	jumpsMin := E{MinJumps:2}
+	jumpsMax := E{MaxJumps: 3}
 
 	pms, err := ParamsFromMap(map[string]interface{}{
 		"test": 1,
@@ -76,17 +76,17 @@ func TestE_ToCypher(t *testing.T) {
 	//everything
 	all := E{
 		Direction: DirectionPtr(Outgoing),
-		MaxJumps:  IntPtr(20),
-		MinJumps:  IntPtr(4),
+		MaxJumps:  20,
+		MinJumps:  4,
 		Params:    pms,
 		Types:     []string{"one", "two"},
-		Name:      StrPtr("q"),
+		Name:      "q",
 	}
 
 	//error test
-	errorJumps := E{MinJumps: IntPtr(5), MaxJumps: IntPtr(2)}
-	errorNegMaxJumps := E{MinJumps: IntPtr(-1)}
-	errorNegMinJumps := E{MaxJumps: IntPtr(-1)}
+	errorJumps := E{MinJumps: 5, MaxJumps:2}
+	errorNegMaxJumps := E{MinJumps: -1}
+	errorNegMinJumps := E{MaxJumps: -1}
 
 
 

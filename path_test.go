@@ -9,33 +9,33 @@ func TestMatchBuilder(t *testing.T)  {
 	req := require.New(t)
 
 	//(a)
-	cypher, err := NewPath().V(V{Name: StrPtr("a")}).ToCypher()
+	cypher, err := NewPath().V(V{Name: "a"}).ToCypher()
 	req.Nil(err)
 	req.EqualValues("(a)", cypher)
 
 	//(a)--(b)
 	cypher, err = NewPath().
-		V(V{Name:StrPtr("a")}).
+		V(V{Name:"a"}).
 		E(E{}).
-		V(V{Name: StrPtr("b")}).
+		V(V{Name: "b"}).
 		ToCypher()
 	req.Nil(err)
 	req.EqualValues("(a)--(b)", cypher)
 
 	//(a:type)--(b:type)
 	cypher, err = NewPath().
-		V(V{Name:StrPtr("a"), Type: StrPtr("type")}).
+		V(V{Name:"a", Type: "type"}).
 		E(E{}).
-		V(V{Name: StrPtr("b"), Type: StrPtr("type")}).
+		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
 	req.EqualValues("(a:type)--(b:type)", cypher)
 
 	//(a:type)-[e:type]->(b:type)
 	cypher, err = NewPath().
-		V(V{Name:StrPtr("a"), Type: StrPtr("type")}).
-		E(E{Direction: DirectionPtr(Outgoing), Name: StrPtr("e"), Types:[]string{"type"}}).
-		V(V{Name: StrPtr("b"), Type: StrPtr("type")}).
+		V(V{Name:"a", Type: "type"}).
+		E(E{Direction: DirectionPtr(Outgoing), Name: "e", Types:[]string{"type"}}).
+		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
 	req.EqualValues("(a:type)-[e:type]->(b:type)", cypher)
@@ -43,9 +43,9 @@ func TestMatchBuilder(t *testing.T)  {
 	//p=(a:type),(b:type)--(c:type)
 	cypher, err = NewPath().
 		P().
-		V(V{Name:StrPtr("a"), Type: StrPtr("type")}, V{Name: StrPtr("b"), Type: StrPtr("type")}).
+		V(V{Name:"a", Type: "type"}, V{Name: "b", Type: "type"}).
 		E(E{}).
-		V(V{Name: StrPtr("c"), Type: StrPtr("type")}).
+		V(V{Name: "c", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
 	req.EqualValues("p=(a:type),(b:type)--(c:type)", cypher)
@@ -53,9 +53,9 @@ func TestMatchBuilder(t *testing.T)  {
 	//p=(a:type)-[e:type]->(b:type)
 	cypher, err = NewPath().
 		P().
-		V(V{Name:StrPtr("a"), Type: StrPtr("type")}).
-		E(E{Direction: DirectionPtr(Outgoing), Name: StrPtr("e"), Types:[]string{"type"}}).
-		V(V{Name: StrPtr("b"), Type: StrPtr("type")}).
+		V(V{Name:"a", Type: "type"}).
+		E(E{Direction: DirectionPtr(Outgoing), Name: "e", Types:[]string{"type"}}).
+		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
 	req.EqualValues("p=(a:type)-[e:type]->(b:type)", cypher)
@@ -67,19 +67,19 @@ func TestMatchBuilder(t *testing.T)  {
 	req.Nil(err)
 
 	cypher, err = NewPath().
-		V(V{Name: StrPtr("a")}).
+		V(V{Name: "a"}).
 		E(E{}).
-		V(V{Name:StrPtr("b")}).
+		V(V{Name:"b"}).
 		E(E{
-			Name:StrPtr("e"),
+			Name:"e",
 			Types: []string{"type"},
 			Direction: DirectionPtr(Outgoing),
-			MaxJumps: IntPtr(5),
-			MinJumps: IntPtr(2),
+			MaxJumps: 5,
+			MinJumps: 2,
 		}).
 		V(V{
-			Name: StrPtr("c"),
-			Type:StrPtr("type"),
+			Name: "c",
+			Type:"type",
 			Params: params,
 		}).ToCypher()
 	req.Nil(err)
@@ -88,18 +88,18 @@ func TestMatchBuilder(t *testing.T)  {
 	//p=(a)--()-[e:type*1..5]->(c:type {q:1})
 	cypher, err = NewPath().
 		P().
-		V(V{Name: StrPtr("a")}).
+		V(V{Name: "a"}).
 		E(E{}).
 		V(V{}).
 		E(E{
-			Name:StrPtr("e"),
+			Name:"e",
 			Types: []string{"type"},
 			Direction: DirectionPtr(Outgoing),
-			MaxJumps: IntPtr(5),
+			MaxJumps: 5,
 		}).
 		V(V{
-			Name: StrPtr("c"),
-			Type:StrPtr("type"),
+			Name: "c",
+			Type:"type",
 			Params: params,
 		}).ToCypher()
 	req.Nil(err)
