@@ -3,14 +3,20 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
+	neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	"strings"
 )
 
-//todo this might need to be renamed
 type QueryBuilder struct {
 	Start *queryPartNode
 	Current *queryPartNode
 	errors []error
+
+	conn neo.Conn
+}
+
+func QB() *QueryBuilder{
+	return &QueryBuilder{}
 }
 
 func (q *QueryBuilder) addNext(s string) {
@@ -44,13 +50,14 @@ type queryPartNode struct {
 	Next *queryPartNode
 }
 
-func (q *QueryBuilder) Match(s string, err error) Cypher {
+func (q *QueryBuilder) Match(p *PathBuilder) Cypher {
+	query, err := p.ToCypher()
 	if err != nil{
 		q.addError(err)
 		return q
 	}
 
-	q.addNext(s)
+	q.addNext("MATCH " + query)
 	return q
 }
 
@@ -174,4 +181,80 @@ func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
 
 	q.addNext(strings.TrimSuffix(query, ","))
 	return q
+}
+
+func (q *QueryBuilder) Limit(num int) Cypher{
+	q.addNext(fmt.Sprintf("LIMIT %v", num))
+	return nil
+}
+
+func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
+	query, err := q.build()
+	if err != nil{
+		return nil, err
+	}
+
+	return q.conn.QueryNeo(query, params)
+}
+
+func (q *QueryBuilder) QueryStruct(params map[string]interface{}, respObj interface{}) (neo.Rows, error) {
+	query, err := q.build()
+	if err != nil{
+		return nil, err
+	}
+
+	res, err := q.conn.QueryNeo(query, params)
+	if err != nil{
+		return nil, err
+	}
+
+	//todo actually handle
+
+	return res, nil
+}
+
+func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
+	query, err := q.build()
+	if err != nil{
+		return nil, err
+	}
+
+	return q.conn.ExecNeo(query, params)
+}
+
+func (q *QueryBuilder) ToCypher() (string, error){
+	return q.build()
+}
+
+func (q *QueryBuilder) build() (string, error){
+	//fail if errors are found
+	if q.hasErrors(){
+		str := "errors found: "
+		for _, err := range q.errors{
+			str += err.Error() + ";"
+		}
+
+		str = strings.TrimSuffix(str, ";") + fmt.Sprintf(" -- total errors (%v)", len(q.errors))
+		return "", errors.New(str)
+	}
+
+	if q.Start == nil || q.Current == nil{
+		return "", errors.New("no nodes were added")
+	}
+
+	query := ""
+
+	cur := q.Start
+
+	for {
+		if cur == nil{
+			break
+		}
+
+		query += cur.Part + " "
+
+		cur = cur.Next
+	}
+
+	return strings.TrimSuffix(query, " "), nil
 }

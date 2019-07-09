@@ -16,6 +16,10 @@ type PathBuilder struct {
 	errors      []error
 }
 
+func Path() *PathBuilder{
+	return NewPath()
+}
+
 func NewPath() *PathBuilder {
 	return &PathBuilder{}
 }
@@ -24,12 +28,24 @@ type VertexStep struct {
 	builder *PathBuilder
 }
 
+func (v *VertexStep) Done() *PathBuilder{
+	return v.builder
+}
+
 type EdgeStep struct {
 	builder *PathBuilder
 }
 
+func (e *EdgeStep) Done() *PathBuilder{
+	return e.builder
+}
+
 type PStep struct{
 	builder *PathBuilder
+}
+
+func (p *PStep) Done() *PathBuilder{
+	return p.builder
 }
 
 type matchStep struct {

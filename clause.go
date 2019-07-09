@@ -1,5 +1,7 @@
 package go_cypherdsl
 
+import neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+
 type Cypher interface {
 	Match
 	Create
@@ -10,11 +12,13 @@ type Cypher interface {
 	Set
 	Remove
 	OrderBy
+	Limit
+	QueryCompleter
 }
 
 //complete
 type Match interface {
-	Match(string, error) Cypher
+	Match(p *PathBuilder) Cypher
 }
 
 //complete
@@ -56,5 +60,12 @@ type OrderBy interface {
 }
 
 type Limit interface {
-	Limit() Cypher
+	Limit(num int) Cypher
+}
+
+type QueryCompleter interface {
+	Query(params map[string]interface{}) (neo.Rows, error)
+	QueryStruct(params map[string]interface{}, respObj interface{}) (neo.Rows, error)
+	Exec(params map[string]interface{}) (neo.Result, error)
+	ToCypher() (string, error)
 }
