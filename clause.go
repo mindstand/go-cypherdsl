@@ -36,16 +36,18 @@ type Return interface {
 	Return(parts ...ReturnPart) Cypher
 }
 
+//complete
 type Delete interface {
 	Delete(detach bool, params ...string) Cypher
 }
 
+//complete
 type Set interface {
 	Set(sets ...SetConfig) Cypher
 }
 
 type Remove interface {
-	Remove(RemoveQuery, error) Cypher
+	Remove(removes ...RemoveConfig) Cypher
 }
 
 type OrderBy interface {

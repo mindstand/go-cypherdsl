@@ -136,13 +136,23 @@ func (q *QueryBuilder) Set(sets ...SetConfig) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Remove(r RemoveQuery, err error) Cypher {
-	if err != nil{
-		q.addError(err)
-		return q
+func (q *QueryBuilder) Remove(removes ...RemoveConfig) Cypher {
+	if len(removes) == 0{
+		q.addError(errors.New("removes can not be empty"))
 	}
 
-	q.addNext(string(r))
+	query := "REMOVE "
+
+	for _, remove := range removes{
+		str, err := remove.ToString()
+		if err != nil{
+			q.addError(err)
+			return q
+		}
+		query += fmt.Sprintf(" %s,", str)
+	}
+
+	q.addNext(strings.TrimSuffix(query, ","))
 	return q
 }
 
