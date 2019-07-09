@@ -27,7 +27,7 @@ type Where interface {
 }
 
 type Merge interface {
-	Merge(MergeQuery, error) Cypher
+	Merge(mergeConf *MergeConfig) Cypher
 }
 
 //complete

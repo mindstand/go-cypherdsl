@@ -346,7 +346,7 @@ func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
 		q := "["
 
 		for _, val := range condition.CheckSlice{
-			str, err := getStringFromInterface(val)
+			str, err := cypherizeInterface(val)
 			if err != nil{
 				return "", err
 			}
@@ -356,7 +356,7 @@ func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
 
 		query += " " + strings.TrimSuffix(q, ",") + "]"
 	} else {
-		str, err := getStringFromInterface(condition.Check)
+		str, err := cypherizeInterface(condition.Check)
 		if err != nil{
 			return "", err
 		}

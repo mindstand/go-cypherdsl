@@ -1,5 +1,7 @@
 package go_cypherdsl
 
+import "errors"
+
 //todo this might need to be renamed
 type QueryBuilder struct {
 	Start *queryPartNode
@@ -68,13 +70,18 @@ func (q *QueryBuilder) Where(w WhereQuery, err error) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Merge(m MergeQuery, err error) Cypher {
+func (q *QueryBuilder) Merge(mergeConf *MergeConfig) Cypher {
+	if mergeConf == nil{
+		q.addError(errors.New("mergeConf can not be nil"))
+		return q
+	}
+	cypher, err := mergeConf.ToString()
 	if err != nil{
 		q.addError(err)
 		return q
 	}
 
-	q.addNext(string(m))
+	q.addNext(cypher)
 
 	return q
 }

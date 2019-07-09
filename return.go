@@ -19,7 +19,7 @@ type ReturnPart struct {
 func (r *ReturnPart) ToString() (string, error){
 	//handle literal
 	if r.Literal != nil {
-		return getStringFromInterface(r.Literal)
+		return cypherizeInterface(r.Literal)
 	}
 
 	//handle boolean expression

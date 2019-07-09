@@ -3,7 +3,6 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	"reflect"
 	"strings"
 )
 
@@ -37,30 +36,14 @@ func (p *Params) Set(key string, value interface{}) error{
 		p.params = map[string]string{}
 	}
 
-	//get interface kind
-	k := reflect.TypeOf(value).Kind()
-
-	//check string
-	if k == reflect.String{
-		p.params[key] = fmt.Sprintf("%s:\"%s\"", key, value.(string))
-		return nil
+	str, err := cypherizeInterface(value)
+	if err != nil{
+		return err
 	}
 
-	//check if primitive numeric type
-	if k == reflect.Int || k == reflect.Int8 || k == reflect.Int16 || k == reflect.Int32 || k == reflect.Int64 ||
-		k == reflect.Uint || k == reflect.Uint8 || k == reflect.Uint16 || k == reflect.Uint32 || k == reflect.Uint64 ||
-		k == reflect.Float32 || k == reflect.Float64{
-		p.params[key] = fmt.Sprintf("%s:%v", key, value)
-		return nil
-	}
+	p.params[key] = fmt.Sprintf("%s:%s", key, str)
 
-	//check bool
-	if k == reflect.Bool{
-		p.params[key] = fmt.Sprintf("%s:%t", key, value.(bool))
-		return nil
-	}
-
-	return fmt.Errorf("unknown type %s", k.String())
+	return nil
 }
 
 func (p *Params) ToCypherMap() string{

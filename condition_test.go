@@ -8,19 +8,19 @@ import (
 func TestGetStrVersion(t *testing.T)  {
 	req := require.New(t)
 
-	cypher, err := getStringFromInterface("test")
+	cypher, err := cypherizeInterface("test")
 	req.Nil(err)
 	req.EqualValues("'test'", cypher)
 
-	cypher, err = getStringFromInterface(1)
+	cypher, err = cypherizeInterface(1)
 	req.Nil(err)
 	req.EqualValues("1", cypher)
 
-	cypher, err = getStringFromInterface(true)
+	cypher, err = cypherizeInterface(true)
 	req.Nil(err)
 	req.EqualValues("true", cypher)
 
-	_, err = getStringFromInterface(struct {
+	_, err = cypherizeInterface(struct {
 
 	}{})
 	req.NotNil(err)

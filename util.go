@@ -6,25 +6,23 @@ import (
 	"reflect"
 )
 
-func StrPtr(s string) *string{
-	return &s
-}
-
-func IntPtr(i int) *int{
-	return &i
-}
-
 func DirectionPtr(d Direction) *Direction{
 	return &d
 }
 
-func getStringFromInterface(i interface{}) (string, error){
+func cypherizeInterface(i interface{}) (string, error){
 	if i == nil{
 		return "NULL", nil
 	}
 
 	//get interface kind
-	k := reflect.TypeOf(i).Kind()
+	t := reflect.TypeOf(i)
+	k := t.Kind()
+
+	if t == reflect.TypeOf(ParamString("")){
+		s := i.(ParamString)
+		return string(s), nil
+	}
 
 	//check string
 	if k == reflect.String{
