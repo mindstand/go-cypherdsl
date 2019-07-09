@@ -1,7 +1,6 @@
 package go_cypherdsl
 
 import (
-	"errors"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -99,16 +98,10 @@ func TestNewIndex(t *testing.T) {
 func TestNewNode(t *testing.T){
 	req := require.New(t)
 
-	tErr := errors.New("test")
-
-	_, err := NewNode("", tErr)
-	req.NotNil(err)
-	req.EqualValues(tErr, err)
-
-	_, err = NewNode("", nil)
+	_, err := NewNode(nil)
 	req.NotNil(err)
 
-	query, err := NewNode("test", nil)
+	query, err := NewNode(Path().V(V{}).Done())
 	req.Nil(err)
 	req.NotEqual("test", query)
 }

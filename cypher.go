@@ -51,6 +51,11 @@ type queryPartNode struct {
 }
 
 func (q *QueryBuilder) Match(p *PathBuilder) Cypher {
+	if p == nil{
+		q.addError(errors.New("path can not be nil"))
+		return q
+	}
+
 	query, err := p.ToCypher()
 	if err != nil{
 		q.addError(err)
@@ -67,17 +72,23 @@ func (q *QueryBuilder) Create(c CreateQuery, err error) Cypher {
 		return q
 	}
 
-	q.addNext(string(c))
+	q.addNext("CREATE " + string(c))
 	return q
 }
 
-func (q *QueryBuilder) Where(w WhereQuery, err error) Cypher {
+func (q *QueryBuilder) Where(cb ConditionOperator) Cypher {
+	if cb == nil{
+		q.addError(errors.New("condition builder can not be nil"))
+		return q
+	}
+
+	w, err := cb.Build()
 	if err != nil{
 		q.addError(err)
 		return q
 	}
 
-	q.addNext(string(w))
+	q.addNext("WHERE " + string(w))
 	return q
 }
 
@@ -92,7 +103,7 @@ func (q *QueryBuilder) Merge(mergeConf *MergeConfig) Cypher {
 		return q
 	}
 
-	q.addNext(cypher)
+	q.addNext("MERGE " + cypher)
 
 	return q
 }
@@ -125,7 +136,7 @@ func (q *QueryBuilder) Set(sets ...SetConfig) Cypher {
 		return q
 	}
 
-	query := "SET "
+	query := "SET"
 
 	for _, setStmt := range sets{
 		str, err := setStmt.ToString()
@@ -137,8 +148,6 @@ func (q *QueryBuilder) Set(sets ...SetConfig) Cypher {
 		query += fmt.Sprintf(" %s,", str)
 	}
 
-
-
 	q.addNext(strings.TrimSuffix(query, ","))
 	return q
 }
@@ -148,7 +157,7 @@ func (q *QueryBuilder) Remove(removes ...RemoveConfig) Cypher {
 		q.addError(errors.New("removes can not be empty"))
 	}
 
-	query := "REMOVE "
+	query := "REMOVE"
 
 	for _, remove := range removes{
 		str, err := remove.ToString()
@@ -168,7 +177,7 @@ func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
 		q.addError(errors.New("removes can not be empty"))
 	}
 
-	query := "ORDER BY "
+	query := "ORDER BY"
 
 	for _, orders := range orderBys{
 		str, err := orders.ToString()
@@ -185,7 +194,7 @@ func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
 
 func (q *QueryBuilder) Limit(num int) Cypher{
 	q.addNext(fmt.Sprintf("LIMIT %v", num))
-	return nil
+	return q
 }
 
 func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {

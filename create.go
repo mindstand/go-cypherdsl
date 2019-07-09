@@ -6,7 +6,12 @@ import (
 	"strings"
 )
 
-func NewNode(query string, err error) (CreateQuery, error){
+func NewNode(builder *PathBuilder) (CreateQuery, error){
+	if builder == nil{
+		return "", errors.New("builder can not be nil")
+	}
+
+	query, err := builder.ToCypher()
 	if err != nil{
 		return "", err
 	}

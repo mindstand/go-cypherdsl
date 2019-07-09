@@ -41,7 +41,7 @@ func TestV_ToCypher(t *testing.T) {
 	//test with name
 	cypher, err = withAll.ToCypher()
 	req.Nil(err)
-	req.EqualValues(cypher, "(test_str:test_type{test_var:\"test\"})")
+	req.EqualValues(cypher, "(test_str:test_type{test_var:'test'})")
 }
 
 func TestE_ToCypher(t *testing.T) {

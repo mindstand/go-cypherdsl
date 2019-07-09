@@ -28,7 +28,7 @@ type Create interface {
 
 //complete
 type Where interface {
-	Where(WhereQuery, error) Cypher
+	Where(cb ConditionOperator) Cypher
 }
 
 //complete
