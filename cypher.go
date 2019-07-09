@@ -1,6 +1,10 @@
 package go_cypherdsl
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
 
 //todo this might need to be renamed
 type QueryBuilder struct {
@@ -108,13 +112,27 @@ func (q *QueryBuilder) Delete(detach bool, params ...string) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Set(s SetQuery, err error) Cypher {
-	if err != nil{
-		q.addError(err)
+func (q *QueryBuilder) Set(sets ...SetConfig) Cypher {
+	if len(sets) == 0{
+		q.addError(errors.New("sets can not be empty"))
 		return q
 	}
 
-	q.addNext(string(s))
+	query := "SET "
+
+	for _, setStmt := range sets{
+		str, err := setStmt.ToString()
+		if err != nil{
+			q.addError(err)
+			return q
+		}
+
+		query += fmt.Sprintf(" %s,", str)
+	}
+
+
+
+	q.addNext(strings.TrimSuffix(query, ","))
 	return q
 }
 

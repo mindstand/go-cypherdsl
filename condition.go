@@ -281,11 +281,7 @@ type ConditionConfig struct {
 	CheckSlice []interface{}
 }
 
-func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
-	if condition == nil{
-		return "", errors.New("condition can not be nil")
-	}
-
+func (condition *ConditionConfig) ToString() (string, error){
 	//check initial error conditions
 	if condition.Name == ""{
 		return "", errors.New("var name can not be empty")
@@ -306,7 +302,7 @@ func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
 		query += fmt.Sprintf("%s.%s", condition.Name, condition.Field)
 	} else if condition.Label != "" {
 		//we're done here
-		return WhereQuery(fmt.Sprintf("%s:%s", condition.Name, condition.Label)), nil
+		return fmt.Sprintf("%s:%s", condition.Name, condition.Label), nil
 	}
 
 	if condition.FieldManipulationFunction != ""{
@@ -326,7 +322,7 @@ func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
 		query += fmt.Sprintf(" %s", condition.ConditionOperator)
 	} else if condition.ConditionFunction != ""{
 		//if its a condition function, we're done
-		return WhereQuery(fmt.Sprintf("%s(%s)", condition.ConditionFunction, query)), nil
+		return fmt.Sprintf("%s(%s)", condition.ConditionFunction, query), nil
 	}
 
 	//check if its valid for in
@@ -363,7 +359,20 @@ func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
 		query += " " + str
 	}
 
-	return WhereQuery(query), nil
+	return query, nil
+}
+
+func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
+	if condition == nil{
+		return "", errors.New("condition can not be nil")
+	}
+
+	str, err := condition.ToString()
+	if err != nil{
+		return "", err
+	}
+
+	return WhereQuery(str), nil
 }
 
 

@@ -41,7 +41,7 @@ type Delete interface {
 }
 
 type Set interface {
-	Set(SetQuery, error) Cypher
+	Set(sets ...SetConfig) Cypher
 }
 
 type Remove interface {
