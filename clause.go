@@ -9,6 +9,7 @@ type Cypher interface {
 	Delete
 	Set
 	Remove
+	OrderBy
 }
 
 //complete
@@ -51,7 +52,7 @@ type Remove interface {
 }
 
 type OrderBy interface {
-	OrderBy() Cypher
+	OrderBy(orderBys ...OrderByConfig) Cypher
 }
 
 type Limit interface {

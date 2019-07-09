@@ -156,3 +156,22 @@ func (q *QueryBuilder) Remove(removes ...RemoveConfig) Cypher {
 	return q
 }
 
+func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
+	if len(orderBys) == 0{
+		q.addError(errors.New("removes can not be empty"))
+	}
+
+	query := "ORDER BY "
+
+	for _, orders := range orderBys{
+		str, err := orders.ToString()
+		if err != nil{
+			q.addError(err)
+			return q
+		}
+		query += fmt.Sprintf(" %s,", str)
+	}
+
+	q.addNext(strings.TrimSuffix(query, ","))
+	return q
+}
