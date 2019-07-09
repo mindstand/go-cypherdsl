@@ -97,13 +97,14 @@ func (q *QueryBuilder) Return(parts ...ReturnPart) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Delete(d DeleteQuery, err error) Cypher {
+func (q *QueryBuilder) Delete(detach bool, params ...string) Cypher {
+	cypher, err := deleteToString(detach, params...)
 	if err != nil{
 		q.addError(err)
 		return q
 	}
 
-	q.addNext(string(d))
+	q.addNext(cypher)
 	return q
 }
 

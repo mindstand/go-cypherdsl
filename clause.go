@@ -26,6 +26,7 @@ type Where interface {
 	Where(WhereQuery, error) Cypher
 }
 
+//complete
 type Merge interface {
 	Merge(mergeConf *MergeConfig) Cypher
 }
@@ -36,7 +37,7 @@ type Return interface {
 }
 
 type Delete interface {
-	Delete(DeleteQuery, error) Cypher
+	Delete(detach bool, params ...string) Cypher
 }
 
 type Set interface {
