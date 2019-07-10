@@ -14,9 +14,9 @@ type TestSerialize struct{
 //this  is purely to demonstrate usage
 func TestNeo(t *testing.T){
 	//comment out to actually run
-	//if testing.Short(){
-	//	t.SkipNow()
-	//}
+	if testing.Short(){
+		t.SkipNow()
+	}
 
 	req := require.New(t)
 
