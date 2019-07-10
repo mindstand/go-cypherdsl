@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+	"log"
 	"strings"
 )
 
@@ -203,23 +204,48 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 		return nil, err
 	}
 
+	//init map to empty if its nil
+	if params == nil{
+		params = map[string]interface{}{}
+	}
+
+	//if this is a one off
+	if q.conn == nil{
+		if !isInitialized{
+			return nil, errors.New("dsl has not been initialized")
+		}
+		//we need to make a new driver since we're not part of a transaction
+		conn, err := connPool.OpenPool()
+		if err != nil{
+			return nil, err
+		}
+
+		tx, err := conn.Begin()
+		if err != nil{
+			return nil, err
+		}
+
+		rows, err := conn.QueryNeo(query, params)
+		if err != nil{
+			oldErr := err
+			err = tx.Rollback()
+			if err != nil{
+				return nil, fmt.Errorf("original error was %s, transaction rollback failed with error %s", oldErr.Error(), err.Error())
+			}
+
+			return nil, err
+		}
+
+		err = tx.Commit()
+		if err != nil{
+			return nil, err
+		}
+
+		//everything is fine, we're done
+		return rows, nil
+	}
+
 	return q.conn.QueryNeo(query, params)
-}
-
-func (q *QueryBuilder) QueryStruct(params map[string]interface{}, respObj interface{}) (neo.Rows, error) {
-	query, err := q.build()
-	if err != nil{
-		return nil, err
-	}
-
-	res, err := q.conn.QueryNeo(query, params)
-	if err != nil{
-		return nil, err
-	}
-
-	//todo actually handle
-
-	return res, nil
 }
 
 func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
@@ -228,6 +254,50 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 		return nil, err
 	}
 
+	log.Println(query)
+
+	//init map to empty if its nil
+	if params == nil{
+		params = map[string]interface{}{}
+	}
+
+	//if this is a one off
+	if q.conn == nil{
+		if !isInitialized{
+			return nil, errors.New("dsl has not been initialized")
+		}
+
+		//we need to make a new driver since we're not part of a transaction
+		conn, err := connPool.OpenPool()
+		if err != nil{
+			return nil, err
+		}
+
+		tx, err := conn.Begin()
+		if err != nil{
+			return nil, err
+		}
+
+		result, err := conn.ExecNeo(query, params)
+		if err != nil{
+			oldErr := err
+			err = tx.Rollback()
+			if err != nil{
+				return nil, fmt.Errorf("original error was %s, transaction rollback failed with error %s", oldErr.Error(), err.Error())
+			}
+
+			return nil, err
+		}
+
+		err = tx.Commit()
+		if err != nil{
+			return nil, err
+		}
+
+		return result, nil
+	}
+
+	//if its part of a greater transaction
 	return q.conn.ExecNeo(query, params)
 }
 

@@ -65,7 +65,6 @@ type Limit interface {
 
 type QueryCompleter interface {
 	Query(params map[string]interface{}) (neo.Rows, error)
-	QueryStruct(params map[string]interface{}, respObj interface{}) (neo.Rows, error)
 	Exec(params map[string]interface{}) (neo.Result, error)
 	ToCypher() (string, error)
 }
