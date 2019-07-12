@@ -198,6 +198,11 @@ func (q *QueryBuilder) Limit(num int) Cypher{
 	return q
 }
 
+func (q *QueryBuilder) Cypher(c string) Cypher{
+	q.addNext(c)
+	return q
+}
+
 func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 	query, err := q.build()
 	if err != nil{

@@ -13,6 +13,7 @@ type Cypher interface {
 	Remove
 	OrderBy
 	Limit
+	CustomCypher
 	QueryCompleter
 }
 
@@ -61,6 +62,10 @@ type OrderBy interface {
 
 type Limit interface {
 	Limit(num int) Cypher
+}
+
+type CustomCypher interface {
+	Cypher(q string) Cypher
 }
 
 type QueryCompleter interface {
