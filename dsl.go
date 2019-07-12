@@ -130,8 +130,16 @@ func (s *Session) Close() error{
 	return s.conn.Close()
 }
 
-//to do a query
 func (s *Session) Query() Cypher{
+	return s.query(false)
+}
+
+func (s *Session) QueryReadOnly() Cypher{
+	return s.query(true)
+}
+
+//to do a query
+func (s *Session) query(readonly bool) Cypher{
 	if !isInitialized{
 		return &QueryBuilder{
 			errors: []error{errors.New("cypher dsl not initialized")},
@@ -154,10 +162,12 @@ func (s *Session) Query() Cypher{
 	if s.tx == nil{
 		return &QueryBuilder{
 			conn: nil,
+			readonly: readonly,
 		}
 	}
 
 	return&QueryBuilder{
 		conn: s.conn,
+		readonly: readonly,
 	}
 }

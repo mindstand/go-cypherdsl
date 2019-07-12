@@ -9,12 +9,12 @@ func TestQueryBuilder(t *testing.T){
 	req := require.New(t)
 
 	//match (n) return n
-	cypher, err := QB().Match(Path().V(V{Name:"n"}).Done()).Return(ReturnPart{Name: "n"}).ToCypher()
+	cypher, err := QB(false).Match(Path().V(V{Name:"n"}).Done()).Return(ReturnPart{Name: "n"}).ToCypher()
 	req.Nil(err)
 	req.EqualValues("MATCH (n) RETURN n", cypher)
 
 	//MATCH (n) WHERE n.age = 21 RETURN n
-	cypher, err = QB().
+	cypher, err = QB(false).
 		Match(Path().V(V{Name: "n"}).Done()).Where(C(&ConditionConfig{
 			Name: "n",
 			Field: "age",
@@ -27,7 +27,7 @@ func TestQueryBuilder(t *testing.T){
 	req.EqualValues("MATCH (n) WHERE n.age = 21 RETURN n", cypher)
 
 	//MATCH (n) RETURN n ORDER BY n.age DESC LIMIT 5
-	cypher, err = QB().
+	cypher, err = QB(false).
 		Match(Path().V(V{Name: "n"}).Done()).
 		Return(ReturnPart{Name: "n"}).
 		OrderBy(OrderByConfig{Name: "n", Member: "age", Desc: true}).
@@ -44,7 +44,7 @@ func TestQueryBuilder(t *testing.T){
 	req.Nil(err)
 	req.NotNil(params)
 
-	cypher, err = QB().
+	cypher, err = QB(false).
 		Create(NewNode(Path().V(V{
 			Name: "n",
 			Type: "Type",
@@ -59,7 +59,7 @@ func TestQueryBuilder(t *testing.T){
 	req.Contains(cypher, "age:21")
 
 	//MATCH (n) DETACH DELETE n
-	cypher, err = QB().
+	cypher, err = QB(false).
 		Match(Path().V(V{Name:"n"}).Done()).
 		Delete(true, "n").
 		ToCypher()
@@ -67,7 +67,7 @@ func TestQueryBuilder(t *testing.T){
 	req.EqualValues("MATCH (n) DETACH DELETE n", cypher)
 
 	//MATCH (n) SET n.name=5
-	cypher, err = QB().
+	cypher, err = QB(false).
 		Match(Path().V(V{Name: "n"}).Done()).
 		Set(SetConfig{
 			Name: "n",
@@ -84,7 +84,7 @@ func TestQueryBuilder(t *testing.T){
 	req.Nil(err)
 
 	//MERGE (city:City) REMOVE city.name
-	cypher, err = QB().
+	cypher, err = QB(false).
 		Merge(&MergeConfig{
 			Path: path,
 		}).

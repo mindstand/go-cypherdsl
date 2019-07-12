@@ -2,6 +2,7 @@ package go_cypherdsl
 
 import (
 	"github.com/stretchr/testify/require"
+	"log"
 	"testing"
 )
 
@@ -10,6 +11,34 @@ type TestSerialize struct{
 	Age int `json:"age"`
 }
 
+
+func TestIndexs(t *testing.T){
+	if testing.Short(){
+		t.SkipNow()
+		return
+	}
+
+	err := Init(&ConnectionConfig{
+		Username: "neo4j",
+		Password: "password",
+		Host: "mindstand.tech",
+		Port: 7687,
+		PoolSize: 15,
+	})
+	require.Nil(t, err)
+
+	sess := NewSession()
+
+	rows, err := sess.QueryReadOnly().Cypher("CALL db.constraints()").Query(nil)
+	require.Nil(t, err)
+
+	vals, err := RowsToStringArray(rows)
+	require.Nil(t, err)
+	for _, v := range vals{
+		log.Println(v)
+	}
+
+}
 
 //this  is purely to demonstrate usage
 func TestNeo(t *testing.T){
