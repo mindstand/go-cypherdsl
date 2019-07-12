@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
-	"log"
 	"strings"
 )
 
@@ -217,6 +216,8 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 		params = map[string]interface{}{}
 	}
 
+	log.Debugf("Executing '%s' with params '%v'", query, params)
+
 	//if this is a one off
 	if q.conn == nil{
 		if !isInitialized{
@@ -275,6 +276,8 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 	if params == nil{
 		params = map[string]interface{}{}
 	}
+
+	log.Debugf("Executing '%s' with params '%v'", query, params)
 
 	//if this is a one off
 	if q.conn == nil{

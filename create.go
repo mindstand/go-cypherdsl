@@ -55,10 +55,19 @@ func NewIndex(index *IndexConfig) (CreateQuery, error){
 }
 
 type ConstraintConfig struct {
+	//specify the name of the variable for the constraint
 	Name string
+
+	//specify the type the action takes place on
 	Type string
+
+	//specify the field the action takes place on
 	Field string
+
+	//require field to be unique
 	Unique bool
+
+	//require field to show up
 	Exists bool
 }
 
