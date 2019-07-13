@@ -2,7 +2,6 @@ package go_cypherdsl
 
 import (
 	"github.com/stretchr/testify/require"
-	"log"
 	"testing"
 )
 
@@ -13,7 +12,7 @@ type TestSerialize struct{
 
 
 func TestIndexs(t *testing.T){
-	if testing.Short(){
+	if !testing.Short(){
 		t.SkipNow()
 		return
 	}
@@ -21,7 +20,7 @@ func TestIndexs(t *testing.T){
 	err := Init(&ConnectionConfig{
 		Username: "neo4j",
 		Password: "password",
-		Host: "mindstand.tech",
+		Host: "0.0.0.0",
 		Port: 7687,
 		PoolSize: 15,
 	})
@@ -43,8 +42,9 @@ func TestIndexs(t *testing.T){
 //this  is purely to demonstrate usage
 func TestNeo(t *testing.T){
 	//comment out to actually run
-	if testing.Short(){
+	if !testing.Short(){
 		t.SkipNow()
+		return
 	}
 
 	req := require.New(t)

@@ -53,8 +53,7 @@ func RowsToStringArray(rows neo.Rows) ([]string, error){
 
 	//check to make sure its not empty
 	if data == nil || len(data) == 0 || len(data[0]) == 0{
-		//todo standard "not found" error
-		return nil, errors.New("data can not be empty")
+		return []string{}, nil
 	}
 
 
@@ -98,7 +97,7 @@ func RowsTo2dStringArray(rows neo.Rows) ([][]string, error){
 		}
 		return toReturn, rows.Close()
 	} else {
-		return nil, errors.New("unknown response type")
+		return [][]string{}, nil
 	}
 }
 
