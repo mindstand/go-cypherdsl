@@ -148,3 +148,9 @@ const (
 	Incoming
 
 )
+
+type EdgeConfig struct {
+	Type string
+	StartNode int64
+	EndNode int64
+}

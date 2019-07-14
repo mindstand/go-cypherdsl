@@ -10,13 +10,26 @@ type ReturnPart struct {
 	Name string
 	Type string
 	Alias string
-	Distinct bool
+	Function *FunctionConfig
 	Literal interface{}
 	BooleanExpression WhereQuery
 	Path string
 }
 
 func (r *ReturnPart) ToString() (string, error){
+	if r.Function != nil {
+		query, err := r.Function.ToString()
+		if err != nil{
+			return "", err
+		}
+
+		if r.Alias != "" {
+			query += fmt.Sprintf(" AS %s", r.Alias)
+		}
+
+		return query, nil
+	}
+
 	//handle literal
 	if r.Literal != nil {
 		return cypherizeInterface(r.Literal)
@@ -38,10 +51,6 @@ func (r *ReturnPart) ToString() (string, error){
 	//handle standard return
 	query := r.Name
 
-	if r.Distinct{
-		query = "DISTINCT " + query
-	}
-
 	if r.Type != ""{
 		query += fmt.Sprintf(".%s", r.Type)
 	}
@@ -53,12 +62,16 @@ func (r *ReturnPart) ToString() (string, error){
 	return query, nil
 }
 
-func NewReturnClause(parts ...ReturnPart) (ReturnQuery, error){
+func NewReturnClause(distinct bool, parts ...ReturnPart) (ReturnQuery, error){
 	if len(parts) == 0 {
 		return "", errors.New("parts can not be empty")
 	}
 
 	query := "RETURN "
+
+	if distinct{
+		query += "DISTINCT "
+	}
 
 	for _, part := range parts{
 		partStr, err := part.ToString()

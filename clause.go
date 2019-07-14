@@ -48,7 +48,7 @@ type Merge interface {
 
 //complete
 type Return interface {
-	Return(parts ...ReturnPart) Cypher
+	Return(distinct bool, parts ...ReturnPart) Cypher
 }
 
 //complete

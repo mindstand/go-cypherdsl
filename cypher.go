@@ -127,8 +127,8 @@ func (q *QueryBuilder) Merge(mergeConf *MergeConfig) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Return(parts ...ReturnPart) Cypher {
-	str, err := NewReturnClause(parts...)
+func (q *QueryBuilder) Return(distinct bool, parts ...ReturnPart) Cypher {
+	str, err := NewReturnClause(distinct, parts...)
 	if err != nil{
 		q.addError(err)
 		return q

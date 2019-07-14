@@ -14,7 +14,6 @@ func TestReturnPart_ToString(t *testing.T) {
 	nameOnly := ReturnPart{Name: "name"}
 	nameType := ReturnPart{Name: "name", Type: "whatever"}
 	nameTypeAlias := ReturnPart{Name: "name", Type: "whatever", Alias: "test"}
-	distinct := ReturnPart{Name: "name", Type: "whatever", Alias: "test", Distinct: true}
 	empty := ReturnPart{}
 
 	var err error
@@ -49,11 +48,6 @@ func TestReturnPart_ToString(t *testing.T) {
 	cypher, err = nameTypeAlias.ToString()
 	req.Nil(err)
 	req.EqualValues("name.whatever AS test", cypher)
-
-	//test distinct name.whatever as test
-	cypher, err = distinct.ToString()
-	req.Nil(err)
-	req.EqualValues("DISTINCT name.whatever AS test", cypher)
 
 	//test nothing defined
 	cypher, err = empty.ToString()
