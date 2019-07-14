@@ -20,7 +20,7 @@ func TestIndexs(t *testing.T){
 	err := Init(&ConnectionConfig{
 		Username: "neo4j",
 		Password: "password",
-		Host: "mindstand.com",
+		Host: "0.0.0.0",
 		Port: 7687,
 		PoolSize: 15,
 	})
@@ -52,7 +52,7 @@ func TestNeo(t *testing.T){
 	err := Init(&ConnectionConfig{
 		Username: "neo4j",
 		Password: "password",
-		Host: "mindstand.com",
+		Host: "0.0.0.0",
 		Port: 7687,
 		PoolSize: 15,
 	})
