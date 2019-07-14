@@ -5,6 +5,7 @@ import (
 	"fmt"
 	neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	"reflect"
+	"strings"
 )
 
 func DirectionPtr(d Direction) *Direction{
@@ -40,6 +41,26 @@ func cypherizeInterface(i interface{}) (string, error){
 	//check bool
 	if k == reflect.Bool{
 		return fmt.Sprintf("%t", i.(bool)), nil
+	}
+
+	if k == reflect.Slice{
+		q := ""
+
+		is, ok := i.([]interface{})
+		if !ok{
+			return "", errors.New("kind check failed, this should not have happened")
+		}
+
+		for _, iface := range is{
+			s, err := cypherizeInterface(iface)
+			if err != nil{
+				return "", nil
+			}
+
+			q += fmt.Sprintf("%s,", s)
+		}
+
+		return fmt.Sprintf("[%s]", strings.TrimSuffix(q, ",")), nil
 	}
 
 	return "", errors.New("invalid type " + k.String())

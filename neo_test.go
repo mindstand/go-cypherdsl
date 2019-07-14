@@ -20,7 +20,7 @@ func TestIndexs(t *testing.T){
 	err := Init(&ConnectionConfig{
 		Username: "neo4j",
 		Password: "password",
-		Host: "0.0.0.0",
+		Host: "mindstand.com",
 		Port: 7687,
 		PoolSize: 15,
 	})
@@ -42,55 +42,59 @@ func TestIndexs(t *testing.T){
 //this  is purely to demonstrate usage
 func TestNeo(t *testing.T){
 	//comment out to actually run
-	if !testing.Short(){
-		t.SkipNow()
-		return
-	}
+	//if !testing.Short(){
+	//	t.SkipNow()
+	//	return
+	//}
 
 	req := require.New(t)
 
 	err := Init(&ConnectionConfig{
 		Username: "neo4j",
 		Password: "password",
-		Host: "0.0.0.0",
+		Host: "mindstand.com",
 		Port: 7687,
 		PoolSize: 15,
 	})
 
-	//crObj := TestSerialize{
-	//	Name: "Eric",
-	//	Age: 21,
-	//}
-
 	sess := NewSession()
 	defer sess.Close()
-	err = sess.Begin()
+	//err = sess.Begin()
+	//req.Nil(err)
+	//
+	//ericParams, err := ParamsFromMap(map[string]interface{}{
+	//	"name": "Eric",
+	//	"age": 21,
+	//})
+	//req.Nil(err)
+	//
+	//nikitaParams, err := ParamsFromMap(map[string]interface{}{
+	//	"name": "Nikita",
+	//	"age": 21,
+	//})
+	//req.Nil(err)
+	//
+	//path := Path().P().V(V{Type:"TEST", Params:ericParams}).E(E{Types: []string{"CONN"}, Direction:DirectionPtr(Outgoing)}).V(V{Type: "TEST", Params: nikitaParams}).Build()
+	//
+	//res, err := sess.Query().Create(NewNode(path)).Return(ReturnPart{Name:"p"}).Exec(nil)
+	//req.Nil(err)
+	//req.NotNil(res)
+	//
+	//err = sess.Commit()
+	//req.Nil(err)
+	//
+	//t.Log(res.RowsAffected())
+	//t.Log(res.LastInsertId())
+	//t.Log(res.Metadata())
+
+	rows, err := sess.QueryReadOnly().Match(Path().V(V{Name: "n", Type:"OrganizationNode"}).E(E{Name: "e", MaxJumps:2}).V(V{Name: "c"}).Build()).Return(ReturnPart{Name: "n"}, ReturnPart{Name:"e"}, ReturnPart{Name: "c"}).Query(nil)
 	req.Nil(err)
 
-	ericParams, err := ParamsFromMap(map[string]interface{}{
-		"name": "Eric",
-		"age": 21,
-	})
+	arr, meta, err := rows.All()
 	req.Nil(err)
 
-	nikitaParams, err := ParamsFromMap(map[string]interface{}{
-		"name": "Nikita",
-		"age": 21,
-	})
-	req.Nil(err)
-
-	path := Path().P().V(V{Type:"TEST", Params:ericParams}).E(E{Types: []string{"CONN"}, Direction:DirectionPtr(Outgoing)}).V(V{Type: "TEST", Params: nikitaParams}).Done()
-
-	res, err := sess.Query().Create(NewNode(path)).Return(ReturnPart{Name:"p"}).Exec(nil)
-	req.Nil(err)
-	req.NotNil(res)
-
-	err = sess.Commit()
-	req.Nil(err)
-
-	t.Log(res.RowsAffected())
-	t.Log(res.LastInsertId())
-	t.Log(res.Metadata())
+	t.Log(arr)
+	t.Log(meta)
 
 	//notes, we will cast the first output from rows.all to graph.Path then use the ogm to convert that to structs
 

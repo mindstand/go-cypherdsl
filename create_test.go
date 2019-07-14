@@ -101,7 +101,7 @@ func TestNewNode(t *testing.T){
 	_, err := NewNode(nil)
 	req.NotNil(err)
 
-	query, err := NewNode(Path().V(V{}).Done())
+	query, err := NewNode(Path().V(V{}).Build())
 	req.Nil(err)
 	req.NotEqual("test", query)
 }

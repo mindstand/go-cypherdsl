@@ -4,6 +4,7 @@ import neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 
 type Cypher interface {
 	Match
+	OptionalMatch
 	Create
 	Where
 	Merge
@@ -13,6 +14,10 @@ type Cypher interface {
 	Remove
 	OrderBy
 	Limit
+	Skip
+	With
+	Unwind
+	Union
 	CustomCypher
 	QueryCompleter
 }
@@ -20,6 +25,10 @@ type Cypher interface {
 //complete
 type Match interface {
 	Match(p *PathBuilder) Cypher
+}
+
+type OptionalMatch interface {
+	OptionalMatch(p *PathBuilder) Cypher
 }
 
 //complete
@@ -62,6 +71,22 @@ type OrderBy interface {
 
 type Limit interface {
 	Limit(num int) Cypher
+}
+
+type Skip interface {
+	Skip(num int) Cypher
+}
+
+type With interface {
+	With(conf *WithConfig) Cypher
+}
+
+type Unwind interface {
+	Unwind(unwind *UnwindConfig) Cypher
+}
+
+type Union interface {
+	Union(all bool) Cypher
 }
 
 type CustomCypher interface {

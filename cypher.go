@@ -69,6 +69,22 @@ func (q *QueryBuilder) Match(p *PathBuilder) Cypher {
 	return q
 }
 
+func (q *QueryBuilder) OptionalMatch(p *PathBuilder) Cypher{
+	if p == nil{
+		q.addError(errors.New("path can not be nil"))
+		return q
+	}
+
+	query, err := p.ToCypher()
+	if err != nil{
+		q.addError(err)
+		return q
+	}
+
+	q.addNext("OPTIONAL MATCH " + query)
+	return q
+}
+
 func (q *QueryBuilder) Create(c CreateQuery, err error) Cypher {
 	if err != nil{
 		q.addError(err)
@@ -197,6 +213,54 @@ func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
 
 func (q *QueryBuilder) Limit(num int) Cypher{
 	q.addNext(fmt.Sprintf("LIMIT %v", num))
+	return q
+}
+
+func (q *QueryBuilder) Skip(num int) Cypher{
+	q.addNext(fmt.Sprintf("SKIP %v", num))
+	return q
+}
+
+func (q *QueryBuilder) With(conf *WithConfig) Cypher{
+	if conf == nil{
+		q.addError(errors.New("conf can not be nil on With"))
+		return q
+	}
+
+	str, err := conf.ToString()
+	if err != nil{
+		q.addError(err)
+		return q
+	}
+
+	q.addNext(fmt.Sprintf("WITH %s", str))
+	return q
+}
+
+func (q *QueryBuilder) Unwind(unwind *UnwindConfig) Cypher{
+	if unwind == nil{
+		q.addError(errors.New("unwind config cannot be nil"))
+		return q
+	}
+
+	str, err := unwind.ToString()
+	if err != nil{
+		q.addError(err)
+		return q
+	}
+
+	q.addNext(fmt.Sprintf("UNWIND %s", str))
+	return q
+}
+
+func (q *QueryBuilder) Union(all bool) Cypher{
+	query := "UNION"
+
+	if all {
+		query += " ALL"
+	}
+
+	q.addNext(query)
 	return q
 }
 

@@ -9,13 +9,13 @@ func TestQueryBuilder(t *testing.T){
 	req := require.New(t)
 
 	//match (n) return n
-	cypher, err := QB(false).Match(Path().V(V{Name:"n"}).Done()).Return(ReturnPart{Name: "n"}).ToCypher()
+	cypher, err := QB(false).Match(Path().V(V{Name:"n"}).Build()).Return(ReturnPart{Name: "n"}).ToCypher()
 	req.Nil(err)
 	req.EqualValues("MATCH (n) RETURN n", cypher)
 
 	//MATCH (n) WHERE n.age = 21 RETURN n
 	cypher, err = QB(false).
-		Match(Path().V(V{Name: "n"}).Done()).Where(C(&ConditionConfig{
+		Match(Path().V(V{Name: "n"}).Build()).Where(C(&ConditionConfig{
 			Name: "n",
 			Field: "age",
 			ConditionOperator: EqualToOperator,
@@ -28,7 +28,7 @@ func TestQueryBuilder(t *testing.T){
 
 	//MATCH (n) RETURN n ORDER BY n.age DESC LIMIT 5
 	cypher, err = QB(false).
-		Match(Path().V(V{Name: "n"}).Done()).
+		Match(Path().V(V{Name: "n"}).Build()).
 		Return(ReturnPart{Name: "n"}).
 		OrderBy(OrderByConfig{Name: "n", Member: "age", Desc: true}).
 		Limit(5).
@@ -49,7 +49,7 @@ func TestQueryBuilder(t *testing.T){
 			Name: "n",
 			Type: "Type",
 			Params: params,
-		}).Done())).
+		}).Build())).
 		Return(ReturnPart{Name:"n"}).
 		ToCypher()
 	req.Nil(err)
@@ -60,7 +60,7 @@ func TestQueryBuilder(t *testing.T){
 
 	//MATCH (n) DETACH DELETE n
 	cypher, err = QB(false).
-		Match(Path().V(V{Name:"n"}).Done()).
+		Match(Path().V(V{Name:"n"}).Build()).
 		Delete(true, "n").
 		ToCypher()
 	req.Nil(err)
@@ -68,7 +68,7 @@ func TestQueryBuilder(t *testing.T){
 
 	//MATCH (n) SET n.name=5
 	cypher, err = QB(false).
-		Match(Path().V(V{Name: "n"}).Done()).
+		Match(Path().V(V{Name: "n"}).Build()).
 		Set(SetConfig{
 			Name: "n",
 			Member: "name",

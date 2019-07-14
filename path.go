@@ -28,7 +28,7 @@ type VertexStep struct {
 	builder *PathBuilder
 }
 
-func (v *VertexStep) Done() *PathBuilder{
+func (v *VertexStep) Build() *PathBuilder{
 	return v.builder
 }
 
