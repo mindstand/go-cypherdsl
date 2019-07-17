@@ -280,7 +280,7 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 		params = map[string]interface{}{}
 	}
 
-	log.Debugf("Executing '%s' with params '%v'", query, params)
+	log.Infof("Executing '%s' with params '%v'", query, params)
 
 	//if this is a one off
 	if q.conn == nil{
@@ -341,7 +341,7 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 		params = map[string]interface{}{}
 	}
 
-	log.Debugf("Executing '%s' with params '%v'", query, params)
+	log.Infof("Executing '%s' with params '%v'", query, params)
 
 	//if this is a one off
 	if q.conn == nil{

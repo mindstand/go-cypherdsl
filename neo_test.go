@@ -10,7 +10,6 @@ type TestSerialize struct{
 	Age int `json:"age"`
 }
 
-
 func TestIndexs(t *testing.T){
 	if !testing.Short(){
 		t.SkipNow()
@@ -52,7 +51,7 @@ func TestNeo(t *testing.T){
 	err := Init(&ConnectionConfig{
 		Username: "neo4j",
 		Password: "password",
-		Host: "0.0.0.0",
+		Host: "mindstand.com",
 		Port: 7687,
 		PoolSize: 15,
 	})
@@ -87,7 +86,14 @@ func TestNeo(t *testing.T){
 	//t.Log(res.LastInsertId())
 	//t.Log(res.Metadata())
 
-	rows, err := sess.QueryReadOnly().Match(Path().V(V{Name: "n", Type:"OrganizationNode"}).E(E{Name: "e", MaxJumps:2}).V(V{Name: "c"}).Build()).Return(ReturnPart{Name: "n"}, ReturnPart{Name:"e"}, ReturnPart{Name: "c"}).Query(nil)
+	rows, err := sess.QueryReadOnly().
+		Match(Path().V(V{Name: "n", Type:"OrganizationNode"}).Build()).
+		With(&WithConfig{
+			Parts: []WithPart{
+				{Name: "n"},
+			},
+		}).
+		Match(Path().P().V(V{Name: "n"}).E(E{Name: "e", MaxJumps:2}).V(V{Name: "c"}).Build()).Return(true, ReturnPart{Name: "p"}).Query(nil)
 	req.Nil(err)
 
 	arr, meta, err := rows.All()

@@ -59,19 +59,19 @@ func TestNewReturnClause(t *testing.T) {
 	req := require.New(t)
 
 	//empty test
-	cypher, err := NewReturnClause()
+	cypher, err := NewReturnClause(false, )
 	req.NotNil(err)
 	req.EqualValues("", cypher)
 
 	//one part
-	cypher, err = NewReturnClause(ReturnPart{
+	cypher, err = NewReturnClause(false, ReturnPart{
 		Name: "t",
 	})
 	req.Nil(err)
 	req.EqualValues("RETURN t", cypher.ToString())
 
 	//two parts
-	cypher, err = NewReturnClause(ReturnPart{
+	cypher, err = NewReturnClause(false, ReturnPart{
 		Name: "t1",
 	}, ReturnPart{
 		Name: "t2",
