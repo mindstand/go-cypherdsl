@@ -116,10 +116,10 @@ func (e *E) ToCypher() (string, error) {
 		q := fmt.Sprintf("*%v", e.MinJumps)
 		core += q
 	} else if e.MaxJumps != 0{
-		if e.MaxJumps <= 0{
+		if e.MaxJumps < 0{
 			return "", errors.New("max jumps can not be less than 0")
 		}
-		q := fmt.Sprintf("*1..%v", e.MaxJumps)
+		q := fmt.Sprintf("*0..%v", e.MaxJumps)
 		core += q
 	}
 
