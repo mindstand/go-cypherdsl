@@ -97,4 +97,6 @@ type QueryCompleter interface {
 	Query(params map[string]interface{}) (neo.Rows, error)
 	Exec(params map[string]interface{}) (neo.Result, error)
 	ToCypher() (string, error)
+	AddToPreparedStatement(params map[string]interface{}) error
+	ExecutePreparedStatements() ([]neo.Result, error)
 }

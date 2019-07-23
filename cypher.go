@@ -7,11 +7,18 @@ import (
 	"strings"
 )
 
+type stmt struct {
+	Query string
+	Params map[string]interface{}
+}
+
 type QueryBuilder struct {
 	Start *queryPartNode
 	Current *queryPartNode
 	errors []error
 	readonly bool
+
+	preparedStatements []stmt
 
 	conn neo.Conn
 }
@@ -310,6 +317,8 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 				if err != nil{
 					return nil, fmt.Errorf("original error was %s, transaction rollback failed with error %s", oldErr.Error(), err.Error())
 				}
+
+				return nil, oldErr
 			}
 			return nil, err
 		}
@@ -368,7 +377,7 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 				return nil, fmt.Errorf("original error was %s, transaction rollback failed with error %s", oldErr.Error(), err.Error())
 			}
 
-			return nil, err
+			return nil, oldErr
 		}
 
 		err = tx.Commit()
@@ -418,4 +427,38 @@ func (q *QueryBuilder) build() (string, error){
 	}
 
 	return strings.TrimSuffix(query, " "), nil
+}
+
+func (q *QueryBuilder) AddToPreparedStatement(params map[string]interface{}) error{
+	query, err := q.build()
+	if err != nil{
+		return err
+	}
+
+	if q.preparedStatements == nil{
+		q.preparedStatements = []stmt{}
+	}
+
+	q.preparedStatements = append(q.preparedStatements, stmt{
+		Query: query,
+		Params: params,
+	})
+
+	return nil
+}
+
+func (q *QueryBuilder) ExecutePreparedStatements() ([]neo.Result, error){
+	if q.preparedStatements == nil || len(q.preparedStatements) == 0{
+		return nil, errors.New("no statements are prepared")
+	}
+
+	var queries []string
+	var params []map[string]interface{}
+
+	for _, statement := range q.preparedStatements{
+		queries = append(queries, statement.Query)
+		params = append(params, statement.Params)
+	}
+
+	return q.conn.ExecPipeline(queries, params...)
 }
