@@ -287,11 +287,11 @@ func (condition *ConditionConfig) ToString() (string, error){
 		return "", errors.New("var name can not be empty")
 	}
 
-	if condition.Field == "" && condition.Label == ""{
-		return "", errors.New("field or label can not be empty")
+	if (condition.Field == "" && condition.Label == "") && condition.FieldManipulationFunction == ""{
+		return "", errors.New("field, function or label can not be empty")
 	}
 
-	if condition.Field != "" && condition.Label != ""{
+	if condition.Field != "" && condition.Label != "" && condition.FieldManipulationFunction != ""{
 		return "", errors.New("field and label can not both be defined")
 	}
 
