@@ -300,34 +300,9 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 			return nil, err
 		}
 
-		var tx neo.Tx
-
-		if !q.readonly{
-			tx, err = conn.Begin()
-			if err != nil{
-				return nil, err
-			}
-		}
-
 		rows, err := conn.QueryNeo(query, params)
 		if err != nil{
-			if !q.readonly{
-				oldErr := err
-				err = tx.Rollback()
-				if err != nil{
-					return nil, fmt.Errorf("original error was %s, transaction rollback failed with error %s", oldErr.Error(), err.Error())
-				}
-
-				return nil, oldErr
-			}
 			return nil, err
-		}
-
-		if !q.readonly{
-			err = tx.Commit()
-			if err != nil{
-				return nil, err
-			}
 		}
 
 		//everything is fine, we're done
@@ -364,23 +339,7 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 			return nil, err
 		}
 
-		tx, err := conn.Begin()
-		if err != nil{
-			return nil, err
-		}
-
 		result, err := conn.ExecNeo(query, params)
-		if err != nil{
-			oldErr := err
-			err = tx.Rollback()
-			if err != nil{
-				return nil, fmt.Errorf("original error was %s, transaction rollback failed with error %s", oldErr.Error(), err.Error())
-			}
-
-			return nil, oldErr
-		}
-
-		err = tx.Commit()
 		if err != nil{
 			return nil, err
 		}
