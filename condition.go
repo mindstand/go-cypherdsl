@@ -303,6 +303,8 @@ func (condition *ConditionConfig) ToString() (string, error){
 	} else if condition.Label != "" {
 		//we're done here
 		return fmt.Sprintf("%s:%s", condition.Name, condition.Label), nil
+	} else {
+		query = condition.Name
 	}
 
 	if condition.FieldManipulationFunction != ""{
