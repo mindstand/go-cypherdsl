@@ -143,9 +143,9 @@ func (e *E) ToCypher() (string, error) {
 type Direction int
 
 const (
-	Any Direction = iota
-	Outgoing
-	Incoming
+	Any Direction = 1
+	Outgoing Direction = 2
+	Incoming Direction = 3
 
 )
 
