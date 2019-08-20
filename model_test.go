@@ -128,7 +128,7 @@ func TestE_ToCypher(t *testing.T) {
 
 	cypher, err = jumpsMax.ToCypher()
 	req.Nil(err)
-	req.EqualValues("-[*1..3]-", cypher)
+	req.EqualValues("-[*0..3]-", cypher)
 
 	cypher, err = params.ToCypher()
 	req.Nil(err)

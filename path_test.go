@@ -85,7 +85,7 @@ func TestMatchBuilder(t *testing.T)  {
 	req.Nil(err)
 	req.EqualValues("(a)--(b)-[e:type*2..5]->(c:type{q:1})", cypher)
 
-	//p=(a)--()-[e:type*1..5]->(c:type {q:1})
+	//p=(a)--()-[e:type*0..5]->(c:type {q:1})
 	cypher, err = NewPath().
 		P().
 		V(V{Name: "a"}).
@@ -103,5 +103,5 @@ func TestMatchBuilder(t *testing.T)  {
 			Params: params,
 		}).ToCypher()
 	req.Nil(err)
-	req.EqualValues("p=(a)--()-[e:type*1..5]->(c:type{q:1})", cypher)
+	req.EqualValues("p=(a)--()-[e:type*0..5]->(c:type{q:1})", cypher)
 }
