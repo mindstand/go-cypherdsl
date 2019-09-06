@@ -33,13 +33,22 @@ func SetLogger(logger *logrus.Entry) error {
 type ConnectionConfig struct {
 	Username string
 	Password string
+	IsCluster bool
 	Host string
 	Port int
 	PoolSize int
 }
 
 func (c *ConnectionConfig) ConnectionString() string{
-	return fmt.Sprintf("bolt://%s:%s@%s:%v", c.Username, c.Password, c.Host, c.Port)
+	var protocol string
+
+	if c.IsCluster {
+		protocol = "bolt+routing"
+	} else {
+		protocol = "bolt"
+	}
+
+	return fmt.Sprintf("%s://%s:%s@%s:%v", protocol, c.Username, c.Password, c.Host, c.Port)
 }
 
 var connPool bolt.DriverPool
