@@ -1,6 +1,6 @@
 package go_cypherdsl
 
-import neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+import neo "github.com/mindstand/golang-neo4j-bolt-driver"
 
 type Cypher interface {
 	Match

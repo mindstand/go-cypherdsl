@@ -3,7 +3,7 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+	bolt "github.com/mindstand/golang-neo4j-bolt-driver"
 	"github.com/sirupsen/logrus"
 )
 
@@ -90,14 +90,20 @@ func NewSession() *Session{
 	return new(Session)
 }
 
-func (s *Session) Begin() error{
+func (s *Session) Begin(readonly bool) error{
 	if !isInitialized{
 		return errors.New("cypher dsl not initialized")
 	}
 
 	var err error
 	if s.conn == nil{
-		s.conn, err = connPool.OpenPool()
+		var mode bolt.DriverMode
+		if readonly {
+			mode = bolt.ReadOnlyMode
+		} else {
+			mode = bolt.ReadWriteMode
+		}
+		s.conn, err = connPool.OpenPool(mode)
 		if err != nil{
 			return err
 		}
@@ -183,7 +189,13 @@ func (s *Session) query(readonly bool) Cypher{
 
 	//if the connection is not initialized, initialize it
 	if s.conn == nil{
-		s.conn, err = connPool.OpenPool()
+		var mode bolt.DriverMode
+		if readonly {
+			mode = bolt.ReadOnlyMode
+		} else {
+			mode = bolt.ReadWriteMode
+		}
+		s.conn, err = connPool.OpenPool(mode)
 		if err != nil{
 			return &QueryBuilder{
 				errors: []error{err},

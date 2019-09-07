@@ -3,7 +3,7 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+	neo "github.com/mindstand/golang-neo4j-bolt-driver"
 	"strings"
 )
 
@@ -294,8 +294,16 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 		if !isInitialized{
 			return nil, errors.New("dsl has not been initialized")
 		}
+
+		var mode neo.DriverMode
+		if q.readonly {
+			mode = neo.ReadOnlyMode
+		} else {
+			mode = neo.ReadWriteMode
+		}
+
 		//we need to make a new driver since we're not part of a transaction
-		conn, err := connPool.OpenPool()
+		conn, err := connPool.OpenPool(mode)
 		if err != nil{
 			return nil, err
 		}
@@ -333,8 +341,15 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 			return nil, errors.New("dsl has not been initialized")
 		}
 
+		var mode neo.DriverMode
+		if q.readonly {
+			mode = neo.ReadOnlyMode
+		} else {
+			mode = neo.ReadWriteMode
+		}
+
 		//we need to make a new driver since we're not part of a transaction
-		conn, err := connPool.OpenPool()
+		conn, err := connPool.OpenPool(mode)
 		if err != nil{
 			return nil, err
 		}

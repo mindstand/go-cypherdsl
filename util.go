@@ -3,7 +3,7 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	neo "github.com/johnnadratowski/golang-neo4j-bolt-driver"
+	neo "github.com/mindstand/golang-neo4j-bolt-driver"
 	"reflect"
 	"strings"
 )
