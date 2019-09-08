@@ -49,19 +49,19 @@ func TestE_ToCypher(t *testing.T) {
 
 	//not specified
 	nothingSpecified := E{}
-	onlyDirectionIncoming := E{Direction: DirectionPtr(Incoming)}
-	onlyDirectionOutgoing := E{Direction: DirectionPtr(Outgoing)}
-	onlyDirectionAny := E{Direction: DirectionPtr(Any)}
+	onlyDirectionIncoming := E{Direction: DirectionIncoming}
+	onlyDirectionOutgoing := E{Direction: DirectionOutgoing}
+	onlyDirectionNone := E{Direction: DirectionNone}
 
 	//var types
-	varNameOnly := E{Name: "var"}
-	varNameWithOneType := E{Name: "var", Types: []string{"test"}}
-	varWithManyTypes := E{Name: "var", Types: []string{"test1", "test2"}}
+	varNameOnly := E{Name: "var", Direction: DirectionNone}
+	varNameWithOneType := E{Name: "var", Types: []string{"test"}, Direction: DirectionNone}
+	varWithManyTypes := E{Name: "var", Types: []string{"test1", "test2"}, Direction: DirectionNone}
 
 	//jumps
-	jumpsMinMax := E{MinJumps: 2, MaxJumps: 5}
-	jumpsMin := E{MinJumps:2}
-	jumpsMax := E{MaxJumps: 3}
+	jumpsMinMax := E{MinJumps: 2, MaxJumps: 5, Direction: DirectionNone}
+	jumpsMin := E{MinJumps:2, Direction: DirectionNone}
+	jumpsMax := E{MaxJumps: 3, Direction: DirectionNone}
 
 	pms, err := ParamsFromMap(map[string]interface{}{
 		"test": 1,
@@ -71,11 +71,12 @@ func TestE_ToCypher(t *testing.T) {
 	//params
 	params := E{
 		Params: pms,
+		Direction: DirectionNone,
 	}
 
 	//everything
 	all := E{
-		Direction: DirectionPtr(Outgoing),
+		Direction: DirectionOutgoing,
 		MaxJumps:  20,
 		MinJumps:  4,
 		Params:    pms,
@@ -92,7 +93,7 @@ func TestE_ToCypher(t *testing.T) {
 
 	cypher, err := nothingSpecified.ToCypher()
 	req.Nil(err)
-	req.EqualValues("--", cypher)
+	req.EqualValues("-->", cypher)
 
 	cypher, err = onlyDirectionIncoming.ToCypher()
 	req.Nil(err)
@@ -102,7 +103,7 @@ func TestE_ToCypher(t *testing.T) {
 	req.Nil(err)
 	req.EqualValues("-->", cypher)
 
-	cypher, err = onlyDirectionAny.ToCypher()
+	cypher, err = onlyDirectionNone.ToCypher()
 	req.Nil(err)
 	req.EqualValues("--", cypher)
 

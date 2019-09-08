@@ -49,7 +49,7 @@ func (v *V) ToCypher() (string, error) {
 // E represents an edge
 type E struct {
 	//direction of the edge, if null default to any
-	Direction *Direction
+	Direction Direction
 
 	//variable name for constraint queries, omit if null
 	Name string
@@ -68,19 +68,14 @@ type E struct {
 }
 
 func (e *E) ToCypher() (string, error) {
+	//validate direction
+	if e.Direction < 0{
+		return "", fmt.Errorf("invalid direction, index is [%v]", e.Direction)
+	}
+
 	//check if the edge has anything specific
 	if e.Name == "" && (e.Types == nil || len(e.Types) == 0) && e.MinJumps == 0 && e.MaxJumps == 0 && (e.Params == nil || e.Params.IsEmpty()){
-		if e.Direction == nil{
-			return "--", nil
-		} else {
-			if *e.Direction == Incoming {
-				return "<--", nil
-			} else if *e.Direction == Any {
-				return "--", nil
-			} else {
-				return "-->", nil
-			}
-		}
+		return e.Direction.ToString(), nil
 	}
 
 	core := "["
@@ -129,25 +124,47 @@ func (e *E) ToCypher() (string, error) {
 
 	core += "]"
 
-	if e.Direction == nil{
-		return fmt.Sprintf("-%s-", core), nil
-	} else {
-		if *e.Direction == Incoming{
-			return fmt.Sprintf("<-%s-", core), nil
-		} else {
-			return fmt.Sprintf("-%s->", core), nil
-		}
-	}
+	return e.Direction.ToStringClause(core), nil
 }
 
 type Direction int
 
 const (
-	Any Direction = 1
-	Outgoing Direction = 2
-	Incoming Direction = 3
-
+	DirectionOutgoing Direction = 0
+	DirectionIncoming Direction = 1
+	DirectionNone     Direction = 2
+	DirectionBoth     Direction = 3
 )
+
+func (d Direction) ToString() string {
+	switch d {
+	case DirectionOutgoing:
+		return "-->"
+	case DirectionIncoming:
+		return "<--"
+	case DirectionBoth:
+		return "<-->"
+	case DirectionNone:
+		return "--"
+	default:
+		return "--"
+	}
+}
+
+func (d Direction) ToStringClause(clause string) string {
+	switch d {
+	case DirectionOutgoing:
+		return fmt.Sprintf("-%s->", clause)
+	case DirectionIncoming:
+		return fmt.Sprintf("<-%s-", clause)
+	case DirectionBoth:
+		return fmt.Sprintf("<-%s->", clause)
+	case DirectionNone:
+		return fmt.Sprintf("-%s-", clause)
+	default:
+		return fmt.Sprintf("-[%s]-", clause)
+	}
+}
 
 type EdgeConfig struct {
 	Type string

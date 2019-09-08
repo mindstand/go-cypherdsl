@@ -16,7 +16,7 @@ func TestMatchBuilder(t *testing.T)  {
 	//(a)--(b)
 	cypher, err = NewPath().
 		V(V{Name:"a"}).
-		E(E{}).
+		E(E{Direction: DirectionNone}).
 		V(V{Name: "b"}).
 		ToCypher()
 	req.Nil(err)
@@ -25,7 +25,7 @@ func TestMatchBuilder(t *testing.T)  {
 	//(a:type)--(b:type)
 	cypher, err = NewPath().
 		V(V{Name:"a", Type: "type"}).
-		E(E{}).
+		E(E{Direction:DirectionNone}).
 		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -34,7 +34,7 @@ func TestMatchBuilder(t *testing.T)  {
 	//(a:type)-[e:type]->(b:type)
 	cypher, err = NewPath().
 		V(V{Name:"a", Type: "type"}).
-		E(E{Direction: DirectionPtr(Outgoing), Name: "e", Types:[]string{"type"}}).
+		E(E{Direction: DirectionOutgoing, Name: "e", Types:[]string{"type"}}).
 		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -44,7 +44,7 @@ func TestMatchBuilder(t *testing.T)  {
 	cypher, err = NewPath().
 		P().
 		V(V{Name:"a", Type: "type"}, V{Name: "b", Type: "type"}).
-		E(E{}).
+		E(E{Direction: DirectionNone}).
 		V(V{Name: "c", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -54,7 +54,7 @@ func TestMatchBuilder(t *testing.T)  {
 	cypher, err = NewPath().
 		P().
 		V(V{Name:"a", Type: "type"}).
-		E(E{Direction: DirectionPtr(Outgoing), Name: "e", Types:[]string{"type"}}).
+		E(E{Direction: DirectionOutgoing, Name: "e", Types:[]string{"type"}}).
 		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -68,12 +68,12 @@ func TestMatchBuilder(t *testing.T)  {
 
 	cypher, err = NewPath().
 		V(V{Name: "a"}).
-		E(E{}).
+		E(E{Direction: DirectionNone}).
 		V(V{Name:"b"}).
 		E(E{
 			Name:"e",
 			Types: []string{"type"},
-			Direction: DirectionPtr(Outgoing),
+			Direction: DirectionOutgoing,
 			MaxJumps: 5,
 			MinJumps: 2,
 		}).
@@ -89,12 +89,12 @@ func TestMatchBuilder(t *testing.T)  {
 	cypher, err = NewPath().
 		P().
 		V(V{Name: "a"}).
-		E(E{}).
+		E(E{Direction: DirectionNone}).
 		V(V{}).
 		E(E{
 			Name:"e",
 			Types: []string{"type"},
-			Direction: DirectionPtr(Outgoing),
+			Direction: DirectionOutgoing,
 			MaxJumps: 5,
 		}).
 		V(V{

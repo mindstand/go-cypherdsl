@@ -8,10 +8,6 @@ import (
 	"strings"
 )
 
-func DirectionPtr(d Direction) *Direction{
-	return &d
-}
-
 func cypherizeInterface(i interface{}) (string, error){
 	if i == nil{
 		return "NULL", nil

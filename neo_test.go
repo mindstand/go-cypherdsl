@@ -73,7 +73,7 @@ func TestNeo(t *testing.T){
 	//})
 	//req.Nil(err)
 	//
-	//path := Path().P().V(V{Type:"TEST", Params:ericParams}).E(E{Types: []string{"CONN"}, Direction:DirectionPtr(Outgoing)}).V(V{Type: "TEST", Params: nikitaParams}).Build()
+	//path := Path().P().V(V{Type:"TEST", Params:ericParams}).E(E{Types: []string{"CONN"}, Direction:DirectionPtr(DirectionOutgoing)}).V(V{Type: "TEST", Params: nikitaParams}).Build()
 	//
 	//res, err := sess.Query().Create(NewNode(path)).Return(ReturnPart{Name:"p"}).Exec(nil)
 	//req.Nil(err)
