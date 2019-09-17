@@ -20,7 +20,7 @@ type QueryBuilder struct {
 
 	preparedStatements []stmt
 
-	conn neo.Conn
+	conn *neo.BoltConn
 }
 
 func QB(readonly bool) *QueryBuilder{
@@ -276,7 +276,22 @@ func (q *QueryBuilder) Cypher(c string) Cypher{
 	return q
 }
 
+func (q *QueryBuilder) WithNeo(conn *neo.BoltConn) Cypher {
+	if conn == nil {
+		q.addError(errors.New("connection can not be nil"))
+		return q
+	}
+
+	q.conn = conn
+
+	return q
+}
+
 func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
+	if q.conn == nil {
+		return nil, errors.New("connection not specified")
+	}
+
 	query, err := q.build()
 	if err != nil{
 		return nil, err
@@ -289,38 +304,14 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 
 	log.Infof("Executing '%s' with params '%v'", query, params)
 
-	//if this is a one off
-	if q.conn == nil{
-		if !isInitialized{
-			return nil, errors.New("dsl has not been initialized")
-		}
-
-		var mode neo.DriverMode
-		if q.readonly {
-			mode = neo.ReadOnlyMode
-		} else {
-			mode = neo.ReadWriteMode
-		}
-
-		//we need to make a new driver since we're not part of a transaction
-		conn, err := driverPool.Open(mode)
-		if err != nil{
-			return nil, err
-		}
-
-		rows, err := conn.QueryNeo(query, params)
-		if err != nil{
-			return nil, err
-		}
-
-		//everything is fine, we're done
-		return rows, nil
-	}
-
 	return q.conn.QueryNeo(query, params)
 }
 
 func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
+	if q.conn == nil {
+		return nil, errors.New("connection not specified")
+	}
+
 	query, err := q.build()
 	if err != nil{
 		return nil, err
@@ -335,34 +326,6 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 
 	log.Infof("Executing '%s' with params '%v'", query, params)
 
-	//if this is a one off
-	if q.conn == nil{
-		if !isInitialized{
-			return nil, errors.New("dsl has not been initialized")
-		}
-
-		var mode neo.DriverMode
-		if q.readonly {
-			mode = neo.ReadOnlyMode
-		} else {
-			mode = neo.ReadWriteMode
-		}
-
-		//we need to make a new driver since we're not part of a transaction
-		conn, err := driverPool.Open(mode)
-		if err != nil{
-			return nil, err
-		}
-
-		result, err := conn.ExecNeo(query, params)
-		if err != nil{
-			return nil, err
-		}
-
-		return result, nil
-	}
-
-	//if its part of a greater transaction
 	return q.conn.ExecNeo(query, params)
 }
 
