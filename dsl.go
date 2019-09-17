@@ -103,7 +103,7 @@ func (s *Session) Begin(readonly bool) error{
 		} else {
 			mode = bolt.ReadWriteMode
 		}
-		s.conn, err = connPool.OpenPool(mode)
+		s.conn, err = connPool.Open(mode)
 		if err != nil{
 			return err
 		}
@@ -195,7 +195,7 @@ func (s *Session) query(readonly bool) Cypher{
 		} else {
 			mode = bolt.ReadWriteMode
 		}
-		s.conn, err = connPool.OpenPool(mode)
+		s.conn, err = connPool.Open(mode)
 		if err != nil{
 			return &QueryBuilder{
 				errors: []error{err},
