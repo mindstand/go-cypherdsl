@@ -303,7 +303,7 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 		}
 
 		//we need to make a new driver since we're not part of a transaction
-		conn, err := connPool.Open(mode)
+		conn, err := driverPool.Open(mode)
 		if err != nil{
 			return nil, err
 		}
@@ -349,7 +349,7 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 		}
 
 		//we need to make a new driver since we're not part of a transaction
-		conn, err := connPool.Open(mode)
+		conn, err := driverPool.Open(mode)
 		if err != nil{
 			return nil, err
 		}

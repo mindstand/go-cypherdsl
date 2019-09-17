@@ -51,7 +51,7 @@ func (c *ConnectionConfig) ConnectionString() string{
 	return fmt.Sprintf("%s://%s:%s@%s:%v", protocol, c.Username, c.Password, c.Host, c.Port)
 }
 
-var connPool bolt.DriverPool
+var driverPool bolt.DriverPool
 
 var isInitialized = false
 
@@ -71,7 +71,7 @@ func Init(connection *ConnectionConfig) error{
 	}
 
 	var err error
-	connPool, err = bolt.NewDriverPool(connection.ConnectionString(), connection.PoolSize)
+	driverPool, err = bolt.NewDriverPool(connection.ConnectionString(), connection.PoolSize)
 	if err != nil{
 		return err
 	}
@@ -82,7 +82,7 @@ func Init(connection *ConnectionConfig) error{
 }
 
 type Session struct {
-	conn bolt.Conn
+	conn *bolt.BoltConn
 	tx bolt.Tx
 }
 
@@ -103,7 +103,7 @@ func (s *Session) Begin(readonly bool) error{
 		} else {
 			mode = bolt.ReadWriteMode
 		}
-		s.conn, err = connPool.Open(mode)
+		s.conn, err = driverPool.Open(mode)
 		if err != nil{
 			return err
 		}
@@ -166,7 +166,14 @@ func (s *Session) Close() error{
 		return errors.New("connection not open")
 	}
 
-	return s.conn.Close()
+	err := driverPool.Reclaim(s.conn)
+	if err != nil {
+		return err
+	}
+
+	s.conn = nil
+
+	return nil
 }
 
 func (s *Session) Query() Cypher{
@@ -195,7 +202,7 @@ func (s *Session) query(readonly bool) Cypher{
 		} else {
 			mode = bolt.ReadWriteMode
 		}
-		s.conn, err = connPool.Open(mode)
+		s.conn, err = driverPool.Open(mode)
 		if err != nil{
 			return &QueryBuilder{
 				errors: []error{err},
