@@ -16,17 +16,14 @@ type QueryBuilder struct {
 	Start *queryPartNode
 	Current *queryPartNode
 	errors []error
-	readonly bool
 
 	preparedStatements []stmt
 
 	conn *neo.BoltConn
 }
 
-func QB(readonly bool) *QueryBuilder{
-	return &QueryBuilder{
-		readonly: readonly,
-	}
+func QB() *QueryBuilder{
+	return &QueryBuilder{}
 }
 
 func (q *QueryBuilder) addNext(s string) {
