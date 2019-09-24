@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-func cypherizeInterface(i interface{}) (string, error){
-	if i == nil{
+func cypherizeInterface(i interface{}) (string, error) {
+	if i == nil {
 		return "NULL", nil
 	}
 
@@ -17,39 +17,39 @@ func cypherizeInterface(i interface{}) (string, error){
 	t := reflect.TypeOf(i)
 	k := t.Kind()
 
-	if t == reflect.TypeOf(ParamString("")){
+	if t == reflect.TypeOf(ParamString("")) {
 		s := i.(ParamString)
 		return string(s), nil
 	}
 
 	//check string
-	if k == reflect.String{
+	if k == reflect.String {
 		return fmt.Sprintf("'%s'", i.(string)), nil
 	}
 
 	//check if primitive numeric type
 	if k == reflect.Int || k == reflect.Int8 || k == reflect.Int16 || k == reflect.Int32 || k == reflect.Int64 ||
 		k == reflect.Uint || k == reflect.Uint8 || k == reflect.Uint16 || k == reflect.Uint32 || k == reflect.Uint64 ||
-		k == reflect.Float32 || k == reflect.Float64{
+		k == reflect.Float32 || k == reflect.Float64 {
 		return fmt.Sprintf("%v", i), nil
 	}
 
 	//check bool
-	if k == reflect.Bool{
+	if k == reflect.Bool {
 		return fmt.Sprintf("%t", i.(bool)), nil
 	}
 
-	if k == reflect.Slice{
+	if k == reflect.Slice {
 		q := ""
 
 		is, ok := i.([]interface{})
-		if !ok{
+		if !ok {
 			return "", errors.New("kind check failed, this should not have happened")
 		}
 
-		for _, iface := range is{
+		for _, iface := range is {
 			s, err := cypherizeInterface(iface)
-			if err != nil{
+			if err != nil {
 				return "", nil
 			}
 
@@ -62,52 +62,57 @@ func cypherizeInterface(i interface{}) (string, error){
 	return "", errors.New("invalid type " + k.String())
 }
 
-func RowsToStringArray(rows neo.Rows) ([]string, error){
+func RowsToStringArray(rows neo.Rows) ([]string, error) {
 	data, _, err := rows.All()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	//check to make sure its not empty
-	if data == nil || len(data) == 0 || len(data[0]) == 0{
+	if data == nil || len(data) == 0 || len(data[0]) == 0 {
 		return []string{}, nil
 	}
 
-
 	_, ok := data[0][0].(string)
-	if !ok{
+	if !ok {
 		return nil, errors.New("does not contain array of strings")
 	}
 
 	toReturn := make([]string, len(data))
-	for i, v := range data{
-		if len(v) == 0{
+	for i, v := range data {
+		if len(v) == 0 {
 			return nil, errors.New("index %v is empty")
 		}
-		toReturn[i], ok = v[0].(string)
+
+		temp, ok := v[0].(string)
+		if !ok {
+			return nil, errors.New("unable to cast to string")
+		}
+
+		toReturn[i] = temp
 	}
 
 	return toReturn, nil
 }
 
-func RowsTo2dStringArray(rows neo.Rows) ([][]string, error){
+func RowsTo2dStringArray(rows neo.Rows) ([][]string, error) {
 	data, _, err := rows.All()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
-	if len(data) != 0 && len(data[0]) != 0{
+	if len(data) != 0 && len(data[0]) != 0 {
 		toReturn := make([][]string, len(data))
 
 		var ok bool
 
-		for i, v := range data{
+		for i, v := range data {
 
 			toReturn[i] = make([]string, len(v))
 
-			for j, v1 := range v{
+			for j, v1 := range v {
 				toReturn[i][j], ok = v1.(string)
-				if !ok{
+				if !ok {
 					return nil, errors.New("failed to cast value to string")
 				}
 			}
@@ -118,7 +123,7 @@ func RowsTo2dStringArray(rows neo.Rows) ([][]string, error){
 	}
 }
 
-func RowsTo2DInterfaceArray(rows neo.Rows) ([][]interface{}, error){
+func RowsTo2DInterfaceArray(rows neo.Rows) ([][]interface{}, error) {
 	data, _, err := rows.All()
 	return data, err
 }

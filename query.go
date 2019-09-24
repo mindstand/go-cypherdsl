@@ -7,43 +7,43 @@ import (
 
 type CreateQuery string
 
-func (c *CreateQuery) ToString() string{
+func (c *CreateQuery) ToString() string {
 	return string(*c)
 }
 
 type WhereQuery string
 
-func (c *WhereQuery) ToString() string{
+func (c *WhereQuery) ToString() string {
 	return string(*c)
 }
 
 type MergeQuery string
 
-func (c *MergeQuery) ToString() string{
+func (c *MergeQuery) ToString() string {
 	return string(*c)
 }
 
 type ReturnQuery string
 
-func (c *ReturnQuery) ToString() string{
+func (c *ReturnQuery) ToString() string {
 	return string(*c)
 }
 
 type DeleteQuery string
 
-func (c *DeleteQuery) ToString() string{
+func (c *DeleteQuery) ToString() string {
 	return string(*c)
 }
 
 type SetQuery string
 
-func (c *SetQuery) ToString() string{
+func (c *SetQuery) ToString() string {
 	return string(*c)
 }
 
 type RemoveQuery string
 
-func (c *RemoveQuery) ToString() string{
+func (c *RemoveQuery) ToString() string {
 	return string(*c)
 }
 
@@ -54,21 +54,21 @@ func (p *ParamString) ToString() string {
 }
 
 type FunctionConfig struct {
-	Name string
+	Name   string
 	Params []interface{}
 }
 
-func (f *FunctionConfig) ToString() (string, error){
-	if f.Name == ""{
+func (f *FunctionConfig) ToString() (string, error) {
+	if f.Name == "" {
 		return "", errors.New("name can not be nil")
 	}
 
 	fu := f.Name + "("
 
-	if f.Params != nil && len(f.Params) != 0{
-		for i := range f.Params{
+	if f.Params != nil && len(f.Params) != 0 {
+		for i := range f.Params {
 			str, err := cypherizeInterface(f.Params[i])
-			if err != nil{
+			if err != nil {
 				return "", err
 			}
 

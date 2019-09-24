@@ -7,19 +7,19 @@ import (
 )
 
 type ReturnPart struct {
-	Name string
-	Type string
-	Alias string
-	Function *FunctionConfig
-	Literal interface{}
+	Name              string
+	Type              string
+	Alias             string
+	Function          *FunctionConfig
+	Literal           interface{}
 	BooleanExpression WhereQuery
-	Path string
+	Path              string
 }
 
-func (r *ReturnPart) ToString() (string, error){
+func (r *ReturnPart) ToString() (string, error) {
 	if r.Function != nil {
 		query, err := r.Function.ToString()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
@@ -36,22 +36,22 @@ func (r *ReturnPart) ToString() (string, error){
 	}
 
 	//handle boolean expression
-	if r.BooleanExpression != ""{
+	if r.BooleanExpression != "" {
 		return string(r.BooleanExpression), nil
 	}
 
-	if r.Path != ""{
+	if r.Path != "" {
 		return r.Path, nil
 	}
 
-	if r.Name == ""{
+	if r.Name == "" {
 		return "", errors.New("name can not be empty")
 	}
 
 	//handle standard return
 	query := r.Name
 
-	if r.Type != ""{
+	if r.Type != "" {
 		query += fmt.Sprintf(".%s", r.Type)
 	}
 
@@ -62,20 +62,20 @@ func (r *ReturnPart) ToString() (string, error){
 	return query, nil
 }
 
-func NewReturnClause(distinct bool, parts ...ReturnPart) (ReturnQuery, error){
+func NewReturnClause(distinct bool, parts ...ReturnPart) (ReturnQuery, error) {
 	if len(parts) == 0 {
 		return "", errors.New("parts can not be empty")
 	}
 
 	query := "RETURN "
 
-	if distinct{
+	if distinct {
 		query += "DISTINCT "
 	}
 
-	for _, part := range parts{
+	for _, part := range parts {
 		partStr, err := part.ToString()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
@@ -84,4 +84,3 @@ func NewReturnClause(distinct bool, parts ...ReturnPart) (ReturnQuery, error){
 
 	return ReturnQuery(strings.TrimSuffix(query, ", ")), nil
 }
-

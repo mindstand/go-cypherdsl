@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-func NewNode(builder *PathBuilder) (CreateQuery, error){
-	if builder == nil{
+func NewNode(builder *PathBuilder) (CreateQuery, error) {
+	if builder == nil {
 		return "", errors.New("builder can not be nil")
 	}
 
 	query, err := builder.ToCypher()
-	if err != nil{
+	if err != nil {
 		return "", err
 	}
 
-	if query == ""{
+	if query == "" {
 		return "", errors.New("query can not be empty")
 	}
 
@@ -24,30 +24,30 @@ func NewNode(builder *PathBuilder) (CreateQuery, error){
 }
 
 type IndexConfig struct {
-	Type string
+	Type   string
 	Fields []string
 }
 
-func NewIndex(index *IndexConfig) (CreateQuery, error){
-	if index == nil{
+func NewIndex(index *IndexConfig) (CreateQuery, error) {
+	if index == nil {
 		return "", errors.New("index can not be nil")
 	}
 
-	if index.Type == ""{
+	if index.Type == "" {
 		return "", errors.New("type can not be empty")
 	}
 
-	if index.Fields == nil{
+	if index.Fields == nil {
 		return "", errors.New("fields can not be nil")
 	}
 
-	if len(index.Fields) == 0{
+	if len(index.Fields) == 0 {
 		return "", errors.New("fields can not be empty")
 	}
 
 	query := fmt.Sprintf("INDEX ON :%s(", index.Type)
 
-	for _, field := range index.Fields{
+	for _, field := range index.Fields {
 		query += fmt.Sprintf("%s,", field)
 	}
 
@@ -71,16 +71,16 @@ type ConstraintConfig struct {
 	Exists bool
 }
 
-func NewConstraint(constraint *ConstraintConfig) (CreateQuery, error){
-	if constraint == nil{
+func NewConstraint(constraint *ConstraintConfig) (CreateQuery, error) {
+	if constraint == nil {
 		return "", errors.New("constraint can not be nil")
 	}
 
-	if constraint.Name == "" || constraint.Type == "" || constraint.Field == ""{
+	if constraint.Name == "" || constraint.Type == "" || constraint.Field == "" {
 		return "", errors.New("name, type and field can not be empty")
 	}
 
-	if constraint.Unique == constraint.Exists || (!constraint.Unique && !constraint.Exists){
+	if constraint.Unique == constraint.Exists || (!constraint.Unique && !constraint.Exists) {
 		return "", errors.New("can only be unique or exists per call")
 	}
 

@@ -13,7 +13,7 @@ func TestNewConstraint(t *testing.T) {
 	req.NotNil(err)
 
 	//test empty name, type fields
-	errConf := &ConstraintConfig{Name: "", Type:"s", Field: "s"}
+	errConf := &ConstraintConfig{Name: "", Type: "s", Field: "s"}
 
 	//name empty
 	_, err = NewConstraint(errConf)
@@ -95,7 +95,7 @@ func TestNewIndex(t *testing.T) {
 	req.EqualValues("INDEX ON :test(one,two)", cypher.ToString())
 }
 
-func TestNewNode(t *testing.T){
+func TestNewNode(t *testing.T) {
 	req := require.New(t)
 
 	_, err := NewNode(nil)

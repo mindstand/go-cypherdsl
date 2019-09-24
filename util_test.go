@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestCypherizeInterface(t *testing.T){
+func TestCypherizeInterface(t *testing.T) {
 	req := require.New(t)
 
 	str, err := cypherizeInterface(nil)
@@ -29,7 +29,6 @@ func TestCypherizeInterface(t *testing.T){
 	req.EqualValues("true", str)
 
 	_, err = cypherizeInterface(struct {
-
 	}{})
 	req.NotNil(err)
 }

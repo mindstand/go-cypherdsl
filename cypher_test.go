@@ -5,22 +5,22 @@ import (
 	"testing"
 )
 
-func TestQueryBuilder(t *testing.T){
+func TestQueryBuilder(t *testing.T) {
 	req := require.New(t)
 
 	//match (n) return n
-	cypher, err := QB().Match(Path().V(V{Name:"n"}).Build()).Return(false, ReturnPart{Name: "n"}).ToCypher()
+	cypher, err := QB().Match(Path().V(V{Name: "n"}).Build()).Return(false, ReturnPart{Name: "n"}).ToCypher()
 	req.Nil(err)
 	req.EqualValues("MATCH (n) RETURN n", cypher)
 
 	//MATCH (n) WHERE n.age = 21 RETURN n
 	cypher, err = QB().
 		Match(Path().V(V{Name: "n"}).Build()).Where(C(&ConditionConfig{
-			Name: "n",
-			Field: "age",
-			ConditionOperator: EqualToOperator,
-			Check: 21,
-		})).
+		Name:              "n",
+		Field:             "age",
+		ConditionOperator: EqualToOperator,
+		Check:             21,
+	})).
 		Return(false, ReturnPart{Name: "n"}).
 		ToCypher()
 	req.Nil(err)
@@ -39,18 +39,18 @@ func TestQueryBuilder(t *testing.T){
 	//CREATE (n:Type{name:'Eric',age:21}) RETURN n
 	params, err := ParamsFromMap(map[string]interface{}{
 		"name": "Eric",
-		"age": 21,
+		"age":  21,
 	})
 	req.Nil(err)
 	req.NotNil(params)
 
 	cypher, err = QB().
 		Create(NewNode(Path().V(V{
-			Name: "n",
-			Type: "Type",
+			Name:   "n",
+			Type:   "Type",
 			Params: params,
 		}).Build())).
-		Return(false, ReturnPart{Name:"n"}).
+		Return(false, ReturnPart{Name: "n"}).
 		ToCypher()
 	req.Nil(err)
 	req.Contains(cypher, "CREATE (n:Type{")
@@ -60,7 +60,7 @@ func TestQueryBuilder(t *testing.T){
 
 	//MATCH (n) DETACH DELETE n
 	cypher, err = QB().
-		Match(Path().V(V{Name:"n"}).Build()).
+		Match(Path().V(V{Name: "n"}).Build()).
 		Delete(true, "n").
 		ToCypher()
 	req.Nil(err)
@@ -70,17 +70,16 @@ func TestQueryBuilder(t *testing.T){
 	cypher, err = QB().
 		Match(Path().V(V{Name: "n"}).Build()).
 		Set(SetConfig{
-			Name: "n",
-			Member: "name",
+			Name:      "n",
+			Member:    "name",
 			Operation: SetEqualTo,
-			Target: 5,
+			Target:    5,
 		}).
 		ToCypher()
 	req.Nil(err)
 	req.EqualValues("MATCH (n) SET n.name = 5", cypher)
 
-
-	path, err := Path().V(V{Name: "city", Type:"City"}).ToCypher()
+	path, err := Path().V(V{Name: "city", Type: "City"}).ToCypher()
 	req.Nil(err)
 
 	//MERGE (city:City) REMOVE city.name
@@ -89,7 +88,7 @@ func TestQueryBuilder(t *testing.T){
 			Path: path,
 		}).
 		Remove(RemoveConfig{
-			Name: "city",
+			Name:  "city",
 			Field: "name",
 		}).
 		ToCypher()

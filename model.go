@@ -7,7 +7,7 @@ import (
 )
 
 //v represents a vertex query
-type V struct{
+type V struct {
 	//name of the vertex, omit if null
 	Name string
 
@@ -20,24 +20,24 @@ type V struct{
 
 func (v *V) ToCypher() (string, error) {
 	//if nothing is specified, its just an empty vertex
-	if v.Name == "" && v.Type == "" && (v.Params == nil || v.Params.IsEmpty()){
+	if v.Name == "" && v.Type == "" && (v.Params == nil || v.Params.IsEmpty()) {
 		return "()", nil
 	}
 
 	str := "("
 
 	//specify variable name if its there
-	if v.Name != ""{
+	if v.Name != "" {
 		str += v.Name
 	}
 
 	//specify type if its there
-	if v.Type != ""{
+	if v.Type != "" {
 		str += ":" + v.Type
 	}
 
 	//add params if its there
-	if v.Params != nil{
+	if v.Params != nil {
 		str += v.Params.ToCypherMap()
 	}
 
@@ -69,23 +69,23 @@ type E struct {
 
 func (e *E) ToCypher() (string, error) {
 	//validate direction
-	if e.Direction < 0{
+	if e.Direction < 0 {
 		return "", fmt.Errorf("invalid direction, index is [%v]", e.Direction)
 	}
 
 	//check if the edge has anything specific
-	if e.Name == "" && (e.Types == nil || len(e.Types) == 0) && e.MinJumps == 0 && e.MaxJumps == 0 && (e.Params == nil || e.Params.IsEmpty()){
+	if e.Name == "" && (e.Types == nil || len(e.Types) == 0) && e.MinJumps == 0 && e.MaxJumps == 0 && (e.Params == nil || e.Params.IsEmpty()) {
 		return e.Direction.ToString(), nil
 	}
 
 	core := "["
 
-	if e.Name != ""{
+	if e.Name != "" {
 		core += e.Name
 	}
 
-	if e.Types != nil && len(e.Types) != 0{
-		if len(e.Types) == 1{
+	if e.Types != nil && len(e.Types) != 0 {
+		if len(e.Types) == 1 {
 			core += ":" + e.Types[0]
 		} else {
 			q := ""
@@ -98,27 +98,27 @@ func (e *E) ToCypher() (string, error) {
 		}
 	}
 
-	if e.MinJumps != 0 && e.MaxJumps != 0{
-		if (e.MinJumps >= e.MaxJumps) || e.MinJumps <= 0 || e.MaxJumps <= 0{
+	if e.MinJumps != 0 && e.MaxJumps != 0 {
+		if (e.MinJumps >= e.MaxJumps) || e.MinJumps <= 0 || e.MaxJumps <= 0 {
 			return "", errors.New("min jumps can not be greater than or equal to max jumps, also can not be less than 0")
 		}
 		q := fmt.Sprintf("*%v..%v", e.MinJumps, e.MaxJumps)
 		core += q
-	} else if e.MinJumps != 0{
-		if e.MinJumps <= 0{
+	} else if e.MinJumps != 0 {
+		if e.MinJumps <= 0 {
 			return "", errors.New("min jumps can not be less than 0")
 		}
 		q := fmt.Sprintf("*%v", e.MinJumps)
 		core += q
-	} else if e.MaxJumps != 0{
-		if e.MaxJumps < 0{
+	} else if e.MaxJumps != 0 {
+		if e.MaxJumps < 0 {
 			return "", errors.New("max jumps can not be less than 0")
 		}
 		q := fmt.Sprintf("*0..%v", e.MaxJumps)
 		core += q
 	}
 
-	if e.Params != nil{
+	if e.Params != nil {
 		core += e.Params.ToCypherMap()
 	}
 
@@ -167,7 +167,7 @@ func (d Direction) ToStringClause(clause string) string {
 }
 
 type EdgeConfig struct {
-	Type string
+	Type      string
 	StartNode int64
-	EndNode int64
+	EndNode   int64
 }

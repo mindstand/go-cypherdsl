@@ -26,6 +26,6 @@ func TestDeleteToString(t *testing.T) {
 	req.EqualValues("DELETE n, b, C", cypher)
 
 	//delete no params (error)
-	_, err = deleteToString(false, )
+	_, err = deleteToString(false)
 	req.NotNil(err)
 }

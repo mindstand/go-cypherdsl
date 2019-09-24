@@ -28,7 +28,7 @@ func TestWithConfig_ToString(t *testing.T) {
 			},
 			{
 				Name: "t",
-				As: "woo",
+				As:   "woo",
 			},
 		},
 	}
@@ -79,7 +79,7 @@ func TestWithPart_ToString(t *testing.T) {
 
 	//test name field
 	part = WithPart{
-		Name: "test",
+		Name:  "test",
 		Field: "t",
 	}
 
@@ -89,9 +89,9 @@ func TestWithPart_ToString(t *testing.T) {
 
 	//test name field as
 	part = WithPart{
-		Name: "test",
+		Name:  "test",
 		Field: "t",
-		As: "TEST",
+		As:    "TEST",
 	}
 
 	cypher, err = part.ToString()

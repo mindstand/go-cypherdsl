@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-type MergeConfig struct{
+type MergeConfig struct {
 	//the path its merging on
 	Path string
 
@@ -16,25 +16,25 @@ type MergeConfig struct{
 	OnMatch *MergeSetConfig
 }
 
-func (m *MergeConfig) ToString() (string, error){
-	if m.Path == ""{
+func (m *MergeConfig) ToString() (string, error) {
+	if m.Path == "" {
 		return "", errors.New("path can not be empty")
 	}
 
 	query := m.Path
 
-	if m.OnCreate != nil{
+	if m.OnCreate != nil {
 		str, err := m.OnCreate.ToString()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
 		query += fmt.Sprintf(" ON CREATE SET %s", str)
 	}
 
-	if m.OnMatch != nil{
+	if m.OnMatch != nil {
 		str, err := m.OnMatch.ToString()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
@@ -58,35 +58,35 @@ type MergeSetConfig struct {
 	TargetFunction *FunctionConfig
 }
 
-func (m *MergeSetConfig) ToString() (string, error){
-	if m.Name == ""{
+func (m *MergeSetConfig) ToString() (string, error) {
+	if m.Name == "" {
 		return "", errors.New("name can not be empty")
 	}
 
-	if m.Member == ""{
+	if m.Member == "" {
 		return "", errors.New("member can not be empty")
 	}
 
-	if m.Target == nil && m.TargetFunction == nil{
+	if m.Target == nil && m.TargetFunction == nil {
 		return "", errors.New("target or target function has to be defined")
 	}
 
-	if m.Target != nil && m.TargetFunction != nil{
+	if m.Target != nil && m.TargetFunction != nil {
 		return "", errors.New("target and target function can not both be defined")
 	}
 
 	query := fmt.Sprintf("%s.%s = ", m.Name, m.Member)
 
-	if m.Target != nil{
+	if m.Target != nil {
 		str, err := cypherizeInterface(m.Target)
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
 		return query + str, nil
 	} else {
 		str, err := m.TargetFunction.ToString()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 

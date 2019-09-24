@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestGetStrVersion(t *testing.T)  {
+func TestGetStrVersion(t *testing.T) {
 	req := require.New(t)
 
 	cypher, err := cypherizeInterface("test")
@@ -21,7 +21,6 @@ func TestGetStrVersion(t *testing.T)  {
 	req.EqualValues("true", cypher)
 
 	_, err = cypherizeInterface(struct {
-
 	}{})
 	req.NotNil(err)
 }
@@ -33,58 +32,58 @@ func TestNewCondition(t *testing.T) {
 	//exists(type.value)
 	cypher, err := NewCondition(&ConditionConfig{
 		ConditionFunction: "exists",
-		Name: "type",
-		Field: "value",
+		Name:              "type",
+		Field:             "value",
 	})
 	req.Nil(err)
 	req.EqualValues("exists(type.value)", cypher.ToString())
 
 	//exists(toLower(type.value)
 	cypher, err = NewCondition(&ConditionConfig{
-		ConditionFunction: "exists",
+		ConditionFunction:         "exists",
 		FieldManipulationFunction: "toLower",
-		Name: "type",
-		Field: "value",
+		Name:                      "type",
+		Field:                     "value",
 	})
 	req.Nil(err)
 	req.EqualValues("exists(toLower(type.value))", cypher.ToString())
 
 	//type.value >= 1
 	cypher, err = NewCondition(&ConditionConfig{
-		Name: "type",
-		Field: "value",
+		Name:              "type",
+		Field:             "value",
 		ConditionOperator: GreaterThanOrEqualToOperator,
-		Check: 1,
+		Check:             1,
 	})
 	req.Nil(err)
 	req.EqualValues("type.value >= 1", cypher.ToString())
 
 	//type.value = 'test'
 	cypher, err = NewCondition(&ConditionConfig{
-		Name: "type",
-		Field: "value",
+		Name:              "type",
+		Field:             "value",
 		ConditionOperator: EqualToOperator,
-		Check: "test",
+		Check:             "test",
 	})
 	req.Nil(err)
 	req.EqualValues("type.value = 'test'", cypher.ToString())
 
 	//type.value in ['test','test2']
 	cypher, err = NewCondition(&ConditionConfig{
-		Name: "type",
-		Field: "value",
+		Name:              "type",
+		Field:             "value",
 		ConditionOperator: InOperator,
-		CheckSlice: []interface{}{"test", "test2"},
+		CheckSlice:        []interface{}{"test", "test2"},
 	})
 	req.Nil(err)
 	req.EqualValues("type.value IN ['test','test2']", cypher.ToString())
 
 	//type.value IS NULL
 	cypher, err = NewCondition(&ConditionConfig{
-		Name: "type",
-		Field: "value",
+		Name:              "type",
+		Field:             "value",
 		ConditionOperator: IsOperator,
-		Check: nil,
+		Check:             nil,
 	})
 	req.Nil(err)
 	req.EqualValues("type.value IS NULL", cypher.ToString())
@@ -100,7 +99,7 @@ func TestNewCondition(t *testing.T) {
 
 	//checks label and field both defined
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
+		Name:  "adfa",
 		Label: "dasdf",
 		Field: "dafsd",
 	})
@@ -108,15 +107,15 @@ func TestNewCondition(t *testing.T) {
 
 	//check operator and function not defined
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
+		Name:  "adfa",
 		Field: "dafsd",
 	})
 	req.NotNil(err)
 
 	//check operator and function both defined
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
-		Field: "dafsd",
+		Name:              "adfa",
+		Field:             "dafsd",
 		ConditionOperator: "adfasd",
 		ConditionFunction: "asdfasd",
 	})
@@ -124,65 +123,64 @@ func TestNewCondition(t *testing.T) {
 
 	//check IN slice is nil
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
-		Field: "dafsd",
+		Name:              "adfa",
+		Field:             "dafsd",
 		ConditionOperator: InOperator,
-		CheckSlice: nil,
+		CheckSlice:        nil,
 	})
 	req.NotNil(err)
 
 	//check IN non slice check is not nil
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
-		Field: "dafsd",
+		Name:              "adfa",
+		Field:             "dafsd",
 		ConditionOperator: InOperator,
-		Check: 45,
+		Check:             45,
 	})
 	req.NotNil(err)
 
 	//check IN slice is empty
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
-		Field: "dafsd",
+		Name:              "adfa",
+		Field:             "dafsd",
 		ConditionOperator: InOperator,
-		CheckSlice: []interface{}{},
+		CheckSlice:        []interface{}{},
 	})
 	req.NotNil(err)
 
 	//check invalid generic
 	_, err = NewCondition(&ConditionConfig{
-		Name:"adfa",
-		Field: "dafsd",
+		Name:              "adfa",
+		Field:             "dafsd",
 		ConditionOperator: EqualToOperator,
 		Check: struct {
-
 		}{},
 	})
 	req.NotNil(err)
 }
 
-func TestConditionBuilder(t *testing.T){
+func TestConditionBuilder(t *testing.T) {
 	req := require.New(t)
 
 	//(name.type = 1)
 	cypher, err := C(&ConditionConfig{
-		Name: "name",
-		Field: "type",
+		Name:              "name",
+		Field:             "type",
 		ConditionOperator: EqualToOperator,
-		Check: 1,
+		Check:             1,
 	}).Build()
 	req.Nil(err)
 	req.EqualValues("name.type = 1", cypher.ToString())
 
 	//name.type = 1 AND exists(name.type)
 	cypher, err = C(&ConditionConfig{
-		Name: "name",
-		Field: "type",
+		Name:              "name",
+		Field:             "type",
 		ConditionOperator: EqualToOperator,
-		Check: 1,
+		Check:             1,
 	}).And(&ConditionConfig{
-		Name: "name",
-		Field: "type",
+		Name:              "name",
+		Field:             "type",
 		ConditionFunction: "exists",
 	}).Build()
 	req.Nil(err)
@@ -190,23 +188,23 @@ func TestConditionBuilder(t *testing.T){
 
 	//name.type = 1 AND (name.otherType >= 1 OR name.str STARTS WITH 'test')
 	cypher, err = C(&ConditionConfig{
-		Name: "name",
-		Field: "type",
+		Name:              "name",
+		Field:             "type",
 		ConditionOperator: EqualToOperator,
-		Check: 1,
+		Check:             1,
 	}).AndNested(C(
 		&ConditionConfig{
-			Name: "name",
-			Field: "otherType",
-			ConditionOperator: GreaterThanOrEqualToOperator,
-			Check: 1,
-		}).Or(&ConditionConfig{
 			Name:              "name",
-			Field:             "str",
-			ConditionOperator: StartsWithOperator,
-			Check: "test",
-		}).Build()).
-	Build()
+			Field:             "otherType",
+			ConditionOperator: GreaterThanOrEqualToOperator,
+			Check:             1,
+		}).Or(&ConditionConfig{
+		Name:              "name",
+		Field:             "str",
+		ConditionOperator: StartsWithOperator,
+		Check:             "test",
+	}).Build()).
+		Build()
 	req.Nil(err)
 	req.EqualValues("name.type = 1 AND (name.otherType >= 1 OR name.str STARTS WITH 'test')", cypher.ToString())
 

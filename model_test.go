@@ -4,12 +4,13 @@ import (
 	"github.com/stretchr/testify/require"
 	"testing"
 )
+
 func TestV_ToCypher(t *testing.T) {
 	req := require.New(t)
 
 	empty := V{}
 	withVarName := V{Name: "test_str"}
-	withVarNameAndType := V{Name: "test_str", Type:"test_type"}
+	withVarNameAndType := V{Name: "test_str", Type: "test_type"}
 
 	pms, err := ParamsFromMap(map[string]interface{}{
 		"test_var": "test",
@@ -21,7 +22,6 @@ func TestV_ToCypher(t *testing.T) {
 		Type:   "test_type",
 		Params: pms,
 	}
-
 
 	//test empty
 	cypher, err := empty.ToCypher()
@@ -60,7 +60,7 @@ func TestE_ToCypher(t *testing.T) {
 
 	//jumps
 	jumpsMinMax := E{MinJumps: 2, MaxJumps: 5, Direction: DirectionNone}
-	jumpsMin := E{MinJumps:2, Direction: DirectionNone}
+	jumpsMin := E{MinJumps: 2, Direction: DirectionNone}
 	jumpsMax := E{MaxJumps: 3, Direction: DirectionNone}
 
 	pms, err := ParamsFromMap(map[string]interface{}{
@@ -70,7 +70,7 @@ func TestE_ToCypher(t *testing.T) {
 
 	//params
 	params := E{
-		Params: pms,
+		Params:    pms,
 		Direction: DirectionNone,
 	}
 
@@ -85,11 +85,9 @@ func TestE_ToCypher(t *testing.T) {
 	}
 
 	//error test
-	errorJumps := E{MinJumps: 5, MaxJumps:2}
+	errorJumps := E{MinJumps: 5, MaxJumps: 2}
 	errorNegMaxJumps := E{MinJumps: -1}
 	errorNegMinJumps := E{MaxJumps: -1}
-
-
 
 	cypher, err := nothingSpecified.ToCypher()
 	req.Nil(err)

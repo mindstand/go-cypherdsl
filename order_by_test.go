@@ -31,7 +31,7 @@ func TestOrderByConfig_ToString(t *testing.T) {
 
 	//proper
 	t4 := OrderByConfig{
-		Name: "n",
+		Name:   "n",
 		Member: "m",
 	}
 	cypher, err = t4.ToString()
@@ -40,9 +40,9 @@ func TestOrderByConfig_ToString(t *testing.T) {
 
 	//proper
 	t5 := OrderByConfig{
-		Name: "n",
+		Name:   "n",
 		Member: "m",
-		Desc: true,
+		Desc:   true,
 	}
 	cypher, err = t5.ToString()
 	req.Nil(err)

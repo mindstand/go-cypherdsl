@@ -13,14 +13,14 @@ func TestSetConfig_ToString(t *testing.T) {
 	//check conditional
 	t1 := &SetConfig{
 		Operation: SetEqualTo,
-		Target: 1,
-		Member: "t",
-		Name: "f",
+		Target:    1,
+		Member:    "t",
+		Name:      "f",
 		Condition: C(&ConditionConfig{
-			Name: "t",
-			Field: "s",
+			Name:              "t",
+			Field:             "s",
 			ConditionOperator: EqualToOperator,
-			Check: 4,
+			Check:             4,
 		}),
 	}
 	cypher, err = t1.ToString()
@@ -29,7 +29,7 @@ func TestSetConfig_ToString(t *testing.T) {
 
 	//check labels
 	t2 := &SetConfig{
-		Name: "t",
+		Name:  "t",
 		Label: []string{"l1", "l2"},
 	}
 	cypher, err = t2.ToString()
@@ -44,7 +44,7 @@ func TestSetConfig_ToString(t *testing.T) {
 	req.NotNil(param)
 
 	t3 := &SetConfig{
-		Name: "t",
+		Name:      "t",
 		Operation: SetMutate,
 		TargetMap: param,
 	}
@@ -54,7 +54,7 @@ func TestSetConfig_ToString(t *testing.T) {
 
 	//check set node to map
 	t4 := &SetConfig{
-		Name: "t",
+		Name:      "t",
 		Operation: SetEqualTo,
 		TargetMap: param,
 	}
@@ -65,9 +65,9 @@ func TestSetConfig_ToString(t *testing.T) {
 	//check set node member
 	t5 := &SetConfig{
 		Operation: SetEqualTo,
-		Target: 1,
-		Member: "t",
-		Name: "f",
+		Target:    1,
+		Member:    "t",
+		Name:      "f",
 	}
 	cypher, err = t5.ToString()
 	req.Nil(err)
@@ -90,9 +90,9 @@ func TestSetConfig_ToString(t *testing.T) {
 
 	//error - 2 targets defined
 	e4 := &SetConfig{
-		Name: "asdfasd",
+		Name:      "asdfasd",
 		Operation: SetEqualTo,
-		Target: 1,
+		Target:    1,
 		TargetMap: param,
 	}
 	_, err = e4.ToString()
@@ -100,10 +100,10 @@ func TestSetConfig_ToString(t *testing.T) {
 
 	//error - 3 targets defined
 	e5 := &SetConfig{
-		Name: "asdfasd",
-		Operation: SetEqualTo,
-		Target: 1,
-		TargetMap: param,
+		Name:           "asdfasd",
+		Operation:      SetEqualTo,
+		Target:         1,
+		TargetMap:      param,
 		TargetFunction: &FunctionConfig{Name: "s"},
 	}
 	_, err = e5.ToString()
@@ -112,12 +112,12 @@ func TestSetConfig_ToString(t *testing.T) {
 	//error - trying to set labels on conditional
 	e6 := &SetConfig{
 		Condition: C(&ConditionConfig{
-			Name: "t",
-			Field: "s",
+			Name:              "t",
+			Field:             "s",
 			ConditionOperator: EqualToOperator,
-			Check: 4,
+			Check:             4,
 		}),
-		Name: "check",
+		Name:  "check",
 		Label: []string{"asdfasd"},
 	}
 	_, err = e6.ToString()
@@ -125,38 +125,38 @@ func TestSetConfig_ToString(t *testing.T) {
 
 	//error - trying to set labels on mutate operation
 	e7 := &SetConfig{
-		Name: "t",
+		Name:      "t",
 		Operation: SetMutate,
-		Label: []string{"dasdf"},
-		Target: 1,
+		Label:     []string{"dasdf"},
+		Target:    1,
 	}
 	_, err = e7.ToString()
 	req.NotNil(err)
 
 	//error - trying to use member on mutate operation
 	e8 := &SetConfig{
-		Name: "t",
+		Name:      "t",
 		Operation: SetMutate,
-		Member: "asdfasd",
-		Target: 1,
+		Member:    "asdfasd",
+		Target:    1,
 	}
 	_, err = e8.ToString()
 	req.NotNil(err)
 
 	//error - not using target map on mutate operation
 	e9 := &SetConfig{
-		Name: "t",
+		Name:      "t",
 		Operation: SetMutate,
-		Target: 1,
+		Target:    1,
 	}
 	_, err = e9.ToString()
 	req.NotNil(err)
 
 	//error - trying to set node equal to plain target
 	e10 := &SetConfig{
-		Name: "t",
+		Name:      "t",
 		Operation: SetEqualTo,
-		Target: 1,
+		Target:    1,
 	}
 	_, err = e10.ToString()
 	req.NotNil(err)

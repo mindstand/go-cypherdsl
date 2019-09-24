@@ -7,16 +7,16 @@ import (
 
 func TestFunctionConfig_ToString(t *testing.T) {
 	name := FunctionConfig{
-		Name:"test",
+		Name: "test",
 	}
 
 	oneP := FunctionConfig{
-		Name: "test",
+		Name:   "test",
 		Params: []interface{}{1},
 	}
 
 	twoP := FunctionConfig{
-		Name: "test",
+		Name:   "test",
 		Params: []interface{}{1, ParamString("test")},
 	}
 

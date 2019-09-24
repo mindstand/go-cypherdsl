@@ -52,24 +52,23 @@ func TestMergeConfig_ToString(t *testing.T) {
 	t1 := MergeConfig{Path: "test"}
 
 	t2 := MergeConfig{Path: "test", OnCreate: &MergeSetConfig{
-		Name: "test",
+		Name:   "test",
 		Member: "ttt",
 		Target: 1,
 	}}
 
-
 	t3 := MergeConfig{Path: "test", OnMatch: &MergeSetConfig{
-		Name: "test",
+		Name:   "test",
 		Member: "ttt",
 		Target: 1,
 	}}
 
 	t4 := MergeConfig{Path: "test", OnMatch: &MergeSetConfig{
-		Name: "test",
+		Name:   "test",
 		Member: "ttt",
 		Target: 1,
 	}, OnCreate: &MergeSetConfig{
-		Name: "test",
+		Name:   "test",
 		Member: "tt1",
 		Target: 2,
 	}}

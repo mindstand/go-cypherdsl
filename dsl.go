@@ -9,8 +9,8 @@ var externalLog *logrus.Entry
 
 var log = getLogger()
 
-func getLogger() *logrus.Entry{
-	if externalLog == nil{
+func getLogger() *logrus.Entry {
+	if externalLog == nil {
 		//create default logger
 		toReturn := logrus.New()
 
@@ -21,7 +21,7 @@ func getLogger() *logrus.Entry{
 }
 
 func SetLogger(logger *logrus.Entry) error {
-	if logger == nil{
+	if logger == nil {
 		return errors.New("logger can not be nil")
 	}
 	externalLog = logger

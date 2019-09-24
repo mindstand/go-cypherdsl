@@ -9,7 +9,7 @@ type SetOperation string
 
 const (
 	SetEqualTo = "="
-	SetMutate = "+="
+	SetMutate  = "+="
 )
 
 type SetConfig struct {
@@ -38,13 +38,13 @@ type SetConfig struct {
 	Condition ConditionOperator
 }
 
-func (s *SetConfig) ToString() (string, error){
-	if s.Name == ""{
+func (s *SetConfig) ToString() (string, error) {
+	if s.Name == "" {
 		return "", errors.New("name can not be empty")
 	}
 
 	//validate that we aren't trying to do something invalid
-	if s.Condition != nil && ((s.Label != nil && len(s.Label) > 0) || s.Operation == SetMutate){
+	if s.Condition != nil && ((s.Label != nil && len(s.Label) > 0) || s.Operation == SetMutate) {
 		return "", errors.New("can not use mutate operator or change labels on a conditional")
 	}
 
@@ -52,11 +52,11 @@ func (s *SetConfig) ToString() (string, error){
 	query := ""
 
 	//check if its a conditional set
-	if s.Condition == nil{
+	if s.Condition == nil {
 		query = s.Name
 	} else {
 		str, err := s.Condition.Build()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
@@ -64,8 +64,8 @@ func (s *SetConfig) ToString() (string, error){
 	}
 
 	//if were just setting some labels, we're done
-	if (s.Label != nil && len(s.Label) > 0) && s.Operation == ""{
-		for _, label := range s.Label{
+	if (s.Label != nil && len(s.Label) > 0) && s.Operation == "" {
+		for _, label := range s.Label {
 			query += ":" + label
 		}
 
@@ -73,18 +73,18 @@ func (s *SetConfig) ToString() (string, error){
 	}
 
 	//past the label stuff, an operation must be present
-	if s.Operation == ""{
+	if s.Operation == "" {
 		return "", errors.New("operation must be defined")
 	}
 
 	//validate that we only have one type of target set
 	c := 0
 
-	if s.TargetFunction != nil{
+	if s.TargetFunction != nil {
 		c++
 	}
 
-	if s.Target != nil{
+	if s.Target != nil {
 		c++
 	}
 
@@ -92,15 +92,15 @@ func (s *SetConfig) ToString() (string, error){
 		c++
 	}
 
-	if c != 1{
+	if c != 1 {
 		return "", fmt.Errorf("must set exactly one target type, found (%v)", c)
 	}
 
 	//handle mutate operation
-	if s.Operation == SetMutate{
-		if !(s.Label != nil && len(s.Label) > 0){
-			if s.Member == ""{
-				if s.TargetMap != nil{
+	if s.Operation == SetMutate {
+		if !(s.Label != nil && len(s.Label) > 0) {
+			if s.Member == "" {
+				if s.TargetMap != nil {
 					return query + fmt.Sprintf(" %s %s", s.Operation, s.TargetMap.ToCypherMap()), nil
 				} else {
 					return "", errors.New("TargetMap must be defined if trying to mutate")
@@ -118,27 +118,27 @@ func (s *SetConfig) ToString() (string, error){
 	//already validated that only one target type is set
 
 	//validate target node combo
-	if s.Member == "" && (s.Target != nil || s.TargetFunction != nil){
+	if s.Member == "" && (s.Target != nil || s.TargetFunction != nil) {
 		//cant do this kind of operation directly on a node
 		return "", errors.New("can only set node equal to a map")
 	}
 
-	if s.Member != ""{
+	if s.Member != "" {
 		query += fmt.Sprintf(".%s", s.Member)
 	}
 
 	query += fmt.Sprintf(" %s ", s.Operation)
 
-	if s.Target != nil{
+	if s.Target != nil {
 		str, err := cypherizeInterface(s.Target)
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 
 		return query + str, nil
-	} else if s.TargetFunction != nil{
+	} else if s.TargetFunction != nil {
 		str, err := s.TargetFunction.ToString()
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 

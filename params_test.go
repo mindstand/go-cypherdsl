@@ -16,13 +16,12 @@ func TestParams(t *testing.T) {
 	require.NotNil(t, params)
 
 	require.Contains(t, params.ToCypherMap(), "val4:43.444")
-	require.Contains(t, params.ToCypherMap(), "val1:'string'" )
+	require.Contains(t, params.ToCypherMap(), "val1:'string'")
 	require.Contains(t, params.ToCypherMap(), "val2:1")
 	require.Contains(t, params.ToCypherMap(), "val3:true")
 
 	//error test
 	err = params.Set("val", struct {
-
 	}{})
 
 	require.NotNil(t, err)

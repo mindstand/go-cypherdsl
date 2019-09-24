@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func TestMatchBuilder(t *testing.T)  {
+func TestMatchBuilder(t *testing.T) {
 	req := require.New(t)
 
 	//(a)
@@ -15,7 +15,7 @@ func TestMatchBuilder(t *testing.T)  {
 
 	//(a)--(b)
 	cypher, err = NewPath().
-		V(V{Name:"a"}).
+		V(V{Name: "a"}).
 		E(E{Direction: DirectionNone}).
 		V(V{Name: "b"}).
 		ToCypher()
@@ -24,8 +24,8 @@ func TestMatchBuilder(t *testing.T)  {
 
 	//(a:type)--(b:type)
 	cypher, err = NewPath().
-		V(V{Name:"a", Type: "type"}).
-		E(E{Direction:DirectionNone}).
+		V(V{Name: "a", Type: "type"}).
+		E(E{Direction: DirectionNone}).
 		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -33,8 +33,8 @@ func TestMatchBuilder(t *testing.T)  {
 
 	//(a:type)-[e:type]->(b:type)
 	cypher, err = NewPath().
-		V(V{Name:"a", Type: "type"}).
-		E(E{Direction: DirectionOutgoing, Name: "e", Types:[]string{"type"}}).
+		V(V{Name: "a", Type: "type"}).
+		E(E{Direction: DirectionOutgoing, Name: "e", Types: []string{"type"}}).
 		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -43,7 +43,7 @@ func TestMatchBuilder(t *testing.T)  {
 	//p=(a:type),(b:type)--(c:type)
 	cypher, err = NewPath().
 		P().
-		V(V{Name:"a", Type: "type"}, V{Name: "b", Type: "type"}).
+		V(V{Name: "a", Type: "type"}, V{Name: "b", Type: "type"}).
 		E(E{Direction: DirectionNone}).
 		V(V{Name: "c", Type: "type"}).
 		ToCypher()
@@ -53,8 +53,8 @@ func TestMatchBuilder(t *testing.T)  {
 	//p=(a:type)-[e:type]->(b:type)
 	cypher, err = NewPath().
 		P().
-		V(V{Name:"a", Type: "type"}).
-		E(E{Direction: DirectionOutgoing, Name: "e", Types:[]string{"type"}}).
+		V(V{Name: "a", Type: "type"}).
+		E(E{Direction: DirectionOutgoing, Name: "e", Types: []string{"type"}}).
 		V(V{Name: "b", Type: "type"}).
 		ToCypher()
 	req.Nil(err)
@@ -69,17 +69,17 @@ func TestMatchBuilder(t *testing.T)  {
 	cypher, err = NewPath().
 		V(V{Name: "a"}).
 		E(E{Direction: DirectionNone}).
-		V(V{Name:"b"}).
+		V(V{Name: "b"}).
 		E(E{
-			Name:"e",
-			Types: []string{"type"},
+			Name:      "e",
+			Types:     []string{"type"},
 			Direction: DirectionOutgoing,
-			MaxJumps: 5,
-			MinJumps: 2,
+			MaxJumps:  5,
+			MinJumps:  2,
 		}).
 		V(V{
-			Name: "c",
-			Type:"type",
+			Name:   "c",
+			Type:   "type",
 			Params: params,
 		}).ToCypher()
 	req.Nil(err)
@@ -92,14 +92,14 @@ func TestMatchBuilder(t *testing.T)  {
 		E(E{Direction: DirectionNone}).
 		V(V{}).
 		E(E{
-			Name:"e",
-			Types: []string{"type"},
+			Name:      "e",
+			Types:     []string{"type"},
 			Direction: DirectionOutgoing,
-			MaxJumps: 5,
+			MaxJumps:  5,
 		}).
 		V(V{
-			Name: "c",
-			Type:"type",
+			Name:   "c",
+			Type:   "type",
 			Params: params,
 		}).ToCypher()
 	req.Nil(err)

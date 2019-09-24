@@ -8,23 +8,23 @@ import (
 
 type UnwindConfig struct {
 	Slice []interface{}
-	As string
+	As    string
 }
 
-func (u *UnwindConfig) ToString() (string, error){
-	if u.Slice == nil || len(u.Slice) == 0{
+func (u *UnwindConfig) ToString() (string, error) {
+	if u.Slice == nil || len(u.Slice) == 0 {
 		return "", errors.New("slice in unwind can not be empty")
 	}
 
-	if u.As == ""{
+	if u.As == "" {
 		return "", errors.New("AS has to be defined")
 	}
 
 	query := "["
 
-	for _, i := range u.Slice{
+	for _, i := range u.Slice {
 		str, err := cypherizeInterface(i)
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 

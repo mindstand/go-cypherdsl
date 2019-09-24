@@ -7,24 +7,24 @@ import (
 )
 
 type ConditionBuilder struct {
-	Start *operatorNode
+	Start   *operatorNode
 	Current *conditionNode
-	errors []error
+	errors  []error
 }
 
 //should be used to start a condition chain
-func C(condition *ConditionConfig) ConditionOperator{
+func C(condition *ConditionConfig) ConditionOperator {
 	wq, err := NewCondition(condition)
 
-	if err != nil{
+	if err != nil {
 		return &ConditionBuilder{
 			errors: []error{err},
 		}
 	}
 
 	cond := &ConditionBuilder{
-		Start: nil,
-		errors: nil,
+		Start:   nil,
+		errors:  nil,
 		Current: nil,
 	}
 
@@ -37,7 +37,7 @@ func C(condition *ConditionConfig) ConditionOperator{
 	}
 
 	err = cond.addNext(node)
-	if err != nil{
+	if err != nil {
 		cond.addError(err)
 	}
 
@@ -45,8 +45,8 @@ func C(condition *ConditionConfig) ConditionOperator{
 }
 
 //add an error to the condition chain
-func (c *ConditionBuilder) addError(e error){
-	if c.errors == nil{
+func (c *ConditionBuilder) addError(e error) {
+	if c.errors == nil {
 		c.errors = []error{e}
 	} else {
 		c.errors = append(c.errors, e)
@@ -54,22 +54,22 @@ func (c *ConditionBuilder) addError(e error){
 }
 
 //check if the builder has had any errors down the chain
-func (c *ConditionBuilder) hasErrors() bool{
+func (c *ConditionBuilder) hasErrors() bool {
 	return c.errors != nil && len(c.errors) > 0
 }
 
 //add another node to the chain
-func (c *ConditionBuilder) addNext(node *operatorNode) error{
-	if node == nil{
+func (c *ConditionBuilder) addNext(node *operatorNode) error {
+	if node == nil {
 		return errors.New("node can not be nil")
 	}
 
-	if node.Query == nil{
+	if node.Query == nil {
 		return errors.New("next can not be nil")
 	}
 
 	//different behavior if its the first of the chain
-	if c.Start == nil{
+	if c.Start == nil {
 		c.Start = node
 		c.Current = node.Query
 	} else {
@@ -112,29 +112,28 @@ func (c *ConditionBuilder) NotNested(query WhereQuery, err error) ConditionOpera
 	return c.addNestedCondition(query, err, "NOT")
 }
 
-func (c *ConditionBuilder) addNestedCondition(query WhereQuery, err error, condType string) ConditionOperator{
-	if c.hasErrors(){
+func (c *ConditionBuilder) addNestedCondition(query WhereQuery, err error, condType string) ConditionOperator {
+	if c.hasErrors() {
 		return c
 	}
 
-	if err != nil{
+	if err != nil {
 		c.addError(err)
 		return c
 	}
-
 
 	//create node, make sure to wrap the query in parenthases since its nested.
 	node := &operatorNode{
 		Condition: condType,
 		Query: &conditionNode{
 			Condition: "(" + query + ")",
-			Next: nil,
+			Next:      nil,
 		},
 	}
 
 	//add it
 	err = c.addNext(node)
-	if err != nil{
+	if err != nil {
 		c.addError(err)
 	}
 
@@ -142,15 +141,15 @@ func (c *ConditionBuilder) addNestedCondition(query WhereQuery, err error, condT
 	return c
 }
 
-func (c *ConditionBuilder) addCondition(condition *ConditionConfig, condType string) ConditionOperator{
+func (c *ConditionBuilder) addCondition(condition *ConditionConfig, condType string) ConditionOperator {
 	//check if any errors are present, if they are, bail
-	if c.hasErrors(){
+	if c.hasErrors() {
 		return c
 	}
 
 	//convert condition object into actual cypher
 	wq, err := NewCondition(condition)
-	if err != nil{
+	if err != nil {
 		c.addError(err)
 		return c
 	}
@@ -166,7 +165,7 @@ func (c *ConditionBuilder) addCondition(condition *ConditionConfig, condType str
 
 	//add it
 	err = c.addNext(node)
-	if err != nil{
+	if err != nil {
 		c.addError(err)
 	}
 
@@ -176,21 +175,21 @@ func (c *ConditionBuilder) addCondition(condition *ConditionConfig, condType str
 
 func (c *ConditionBuilder) Build() (WhereQuery, error) {
 	//if it has errors, compile that and return
-	if c.hasErrors(){
+	if c.hasErrors() {
 		errStr := ""
-		for _, err := range c.errors{
+		for _, err := range c.errors {
 			errStr += err.Error() + ";"
 		}
 
 		errStr = strings.TrimSuffix(errStr, ";")
 
-		return "", fmt.Errorf("(%v) errors occured: %s", len(c.errors), errStr)
+		return "", fmt.Errorf("(%v) errors occurred: %s", len(c.errors), errStr)
 	}
 
 	query := ""
 
 	//if start is not defined, something went wrong
-	if c.Start == nil{
+	if c.Start == nil {
 		return "", errors.New("no condition defined")
 	}
 
@@ -198,13 +197,13 @@ func (c *ConditionBuilder) Build() (WhereQuery, error) {
 
 	//iterate...
 	for {
-		if i == nil || i.Query == nil{
+		if i == nil || i.Query == nil {
 			break
 		}
 
 		t := ""
 
-		if i.First{
+		if i.First {
 
 		} else {
 			t += i.Condition + " "
@@ -267,7 +266,7 @@ type ConditionConfig struct {
 	//condition functions that can be used
 	ConditionFunction string
 
-	Name string
+	Name  string
 	Field string
 	Label string
 
@@ -281,24 +280,24 @@ type ConditionConfig struct {
 	CheckSlice []interface{}
 }
 
-func (condition *ConditionConfig) ToString() (string, error){
+func (condition *ConditionConfig) ToString() (string, error) {
 	//check initial error conditions
-	if condition.Name == ""{
+	if condition.Name == "" {
 		return "", errors.New("var name can not be empty")
 	}
 
-	if (condition.Field == "" && condition.Label == "") && condition.FieldManipulationFunction == ""{
+	if (condition.Field == "" && condition.Label == "") && condition.FieldManipulationFunction == "" {
 		return "", errors.New("field, function or label can not be empty")
 	}
 
-	if condition.Field != "" && condition.Label != "" && condition.FieldManipulationFunction != ""{
+	if condition.Field != "" && condition.Label != "" && condition.FieldManipulationFunction != "" {
 		return "", errors.New("field and label can not both be defined")
 	}
 
 	query := ""
 
 	//build the fields
-	if condition.Field != ""{
+	if condition.Field != "" {
 		query += fmt.Sprintf("%s.%s", condition.Name, condition.Field)
 	} else if condition.Label != "" {
 		//we're done here
@@ -307,45 +306,45 @@ func (condition *ConditionConfig) ToString() (string, error){
 		query = condition.Name
 	}
 
-	if condition.FieldManipulationFunction != ""{
+	if condition.FieldManipulationFunction != "" {
 		query = fmt.Sprintf("%s(%s)", condition.FieldManipulationFunction, query)
 	}
 
-	if condition.ConditionOperator == "" && condition.ConditionFunction == ""{
+	if condition.ConditionOperator == "" && condition.ConditionFunction == "" {
 		return "", errors.New("either condition operator or condition function has to be defined")
 	}
 
-	if condition.ConditionOperator != "" && condition.ConditionFunction != ""{
+	if condition.ConditionOperator != "" && condition.ConditionFunction != "" {
 		return "", errors.New("operator and function can not both be defined")
 	}
 
 	//build the operators
-	if condition.ConditionOperator != ""{
+	if condition.ConditionOperator != "" {
 		query += fmt.Sprintf(" %s", condition.ConditionOperator)
-	} else if condition.ConditionFunction != ""{
+	} else if condition.ConditionFunction != "" {
 		//if its a condition function, we're done
 		return fmt.Sprintf("%s(%s)", condition.ConditionFunction, query), nil
 	}
 
 	//check if its valid for in
-	if condition.ConditionOperator == InOperator{
-		if condition.CheckSlice == nil{
+	if condition.ConditionOperator == InOperator {
+		if condition.CheckSlice == nil {
 			return "", errors.New("slice can not be nil")
 		}
 
-		if condition.Check != nil{
+		if condition.Check != nil {
 			return "", errors.New("check should not be defined when using in operator")
 		}
 
-		if len(condition.CheckSlice) == 0{
+		if len(condition.CheckSlice) == 0 {
 			return "", errors.New("slice should not be nil")
 		}
 
 		q := "["
 
-		for _, val := range condition.CheckSlice{
+		for _, val := range condition.CheckSlice {
 			str, err := cypherizeInterface(val)
-			if err != nil{
+			if err != nil {
 				return "", err
 			}
 
@@ -355,7 +354,7 @@ func (condition *ConditionConfig) ToString() (string, error){
 		query += " " + strings.TrimSuffix(q, ",") + "]"
 	} else {
 		str, err := cypherizeInterface(condition.Check)
-		if err != nil{
+		if err != nil {
 			return "", err
 		}
 		query += " " + str
@@ -365,16 +364,14 @@ func (condition *ConditionConfig) ToString() (string, error){
 }
 
 func NewCondition(condition *ConditionConfig) (WhereQuery, error) {
-	if condition == nil{
+	if condition == nil {
 		return "", errors.New("condition can not be nil")
 	}
 
 	str, err := condition.ToString()
-	if err != nil{
+	if err != nil {
 		return "", err
 	}
 
 	return WhereQuery(str), nil
 }
-
-

@@ -13,10 +13,10 @@ type PathBuilder struct {
 	currentStep *matchStep
 
 	//save all of the errors for the end
-	errors      []error
+	errors []error
 }
 
-func Path() *PathBuilder{
+func Path() *PathBuilder {
 	return NewPath()
 }
 
@@ -28,7 +28,7 @@ type VertexStep struct {
 	builder *PathBuilder
 }
 
-func (v *VertexStep) Build() *PathBuilder{
+func (v *VertexStep) Build() *PathBuilder {
 	return v.builder
 }
 
@@ -36,15 +36,15 @@ type EdgeStep struct {
 	builder *PathBuilder
 }
 
-func (e *EdgeStep) Done() *PathBuilder{
+func (e *EdgeStep) Done() *PathBuilder {
 	return e.builder
 }
 
-type PStep struct{
+type PStep struct {
 	builder *PathBuilder
 }
 
-func (p *PStep) Done() *PathBuilder{
+func (p *PStep) Done() *PathBuilder {
 	return p.builder
 }
 
@@ -59,25 +59,25 @@ type matchStep struct {
 	Next *matchStep
 }
 
-func (m *matchStep) ToCypher() (string, error){
-	if m.P{
+func (m *matchStep) ToCypher() (string, error) {
+	if m.P {
 		return "p=", nil
 	}
 
-	if m.OtherOperation != ""{
+	if m.OtherOperation != "" {
 		return m.OtherOperation, nil
 	}
 
-	if m.Edge != nil{
+	if m.Edge != nil {
 		return m.Edge.ToCypher()
 	}
 
-	if m.Vertices != nil && len(m.Vertices) > 0{
+	if m.Vertices != nil && len(m.Vertices) > 0 {
 		str := ""
 
-		for _, v := range m.Vertices{
+		for _, v := range m.Vertices {
 			cyph, err := v.ToCypher()
-			if err != nil{
+			if err != nil {
 				return "", err
 			}
 
@@ -126,7 +126,7 @@ func (m *PathBuilder) ToCypher() (string, error) {
 	return query, nil
 }
 
-func (v *VertexStep) ToCypher() (string, error){
+func (v *VertexStep) ToCypher() (string, error) {
 	return v.builder.ToCypher()
 }
 
@@ -136,7 +136,7 @@ func (m *PathBuilder) P() *PathBuilder {
 	}
 
 	//its the first step
-	if m.currentStep == nil{
+	if m.currentStep == nil {
 		m.firstStep = newStep
 		m.currentStep = newStep
 	} else {
@@ -149,7 +149,7 @@ func (m *PathBuilder) P() *PathBuilder {
 
 func (p *PStep) V(vertices ...V) *PathBuilder {
 	if vertices == nil || len(vertices) == 0 {
-		if p.builder.errors == nil{
+		if p.builder.errors == nil {
 			p.builder.errors = []error{}
 		}
 		p.builder.errors = append(p.builder.errors, errors.New("vertices can not be nil or empty"))
@@ -166,8 +166,8 @@ func (p *PStep) V(vertices ...V) *PathBuilder {
 }
 
 func (m *PathBuilder) V(vertices ...V) *VertexStep {
-	if vertices == nil || len(vertices) == 0{
-		if m.errors == nil{
+	if vertices == nil || len(vertices) == 0 {
+		if m.errors == nil {
 			m.errors = []error{}
 		}
 		m.errors = append(m.errors, errors.New("vertices can not be nil or empty"))
@@ -178,7 +178,7 @@ func (m *PathBuilder) V(vertices ...V) *VertexStep {
 	}
 
 	//its the first step
-	if m.currentStep == nil{
+	if m.currentStep == nil {
 		m.firstStep = newStep
 		m.currentStep = newStep
 	} else {
@@ -191,10 +191,9 @@ func (m *PathBuilder) V(vertices ...V) *VertexStep {
 	}
 }
 
-
-func (e *EdgeStep) V(vertices ...V) *VertexStep{
-	if vertices == nil || len(vertices) == 0{
-		if e.builder.errors == nil{
+func (e *EdgeStep) V(vertices ...V) *VertexStep {
+	if vertices == nil || len(vertices) == 0 {
+		if e.builder.errors == nil {
 			e.builder.errors = []error{}
 		}
 		e.builder.errors = append(e.builder.errors, errors.New("vertices can not be nil or empty"))
@@ -211,7 +210,6 @@ func (e *EdgeStep) V(vertices ...V) *VertexStep{
 		builder: e.builder,
 	}
 }
-
 
 func (v *VertexStep) E(edge E) *EdgeStep {
 	newStep := &matchStep{

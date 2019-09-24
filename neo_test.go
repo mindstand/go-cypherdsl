@@ -1,8 +1,8 @@
 package go_cypherdsl
 
-type TestSerialize struct{
+type TestSerialize struct {
 	Name string `json:"name"`
-	Age int `json:"age"`
+	Age  int    `json:"age"`
 }
 
 ////this  is purely to demonstrate usage

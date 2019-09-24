@@ -8,21 +8,21 @@ import (
 )
 
 type stmt struct {
-	Query string
+	Query  string
 	Params map[string]interface{}
 }
 
 type QueryBuilder struct {
-	Start *queryPartNode
+	Start   *queryPartNode
 	Current *queryPartNode
-	errors []error
+	errors  []error
 
 	preparedStatements []stmt
 
 	conn *neo.BoltConn
 }
 
-func QB() *QueryBuilder{
+func QB() *QueryBuilder {
 	return &QueryBuilder{}
 }
 
@@ -31,7 +31,7 @@ func (q *QueryBuilder) addNext(s string) {
 		Part: s,
 	}
 
-	if q.Start == nil{
+	if q.Start == nil {
 		q.Start = node
 		q.Current = node
 	} else {
@@ -40,15 +40,15 @@ func (q *QueryBuilder) addNext(s string) {
 	}
 }
 
-func (q *QueryBuilder) addError(err error){
-	if q.errors == nil{
+func (q *QueryBuilder) addError(err error) {
+	if q.errors == nil {
 		q.errors = []error{}
 	}
 
 	q.errors = append(q.errors, err)
 }
 
-func (q *QueryBuilder) hasErrors() bool{
+func (q *QueryBuilder) hasErrors() bool {
 	return q.errors != nil && len(q.errors) > 0
 }
 
@@ -58,13 +58,13 @@ type queryPartNode struct {
 }
 
 func (q *QueryBuilder) Match(p *PathBuilder) Cypher {
-	if p == nil{
+	if p == nil {
 		q.addError(errors.New("path can not be nil"))
 		return q
 	}
 
 	query, err := p.ToCypher()
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -73,14 +73,14 @@ func (q *QueryBuilder) Match(p *PathBuilder) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) OptionalMatch(p *PathBuilder) Cypher{
-	if p == nil{
+func (q *QueryBuilder) OptionalMatch(p *PathBuilder) Cypher {
+	if p == nil {
 		q.addError(errors.New("path can not be nil"))
 		return q
 	}
 
 	query, err := p.ToCypher()
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -90,7 +90,7 @@ func (q *QueryBuilder) OptionalMatch(p *PathBuilder) Cypher{
 }
 
 func (q *QueryBuilder) Create(c CreateQuery, err error) Cypher {
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -100,13 +100,13 @@ func (q *QueryBuilder) Create(c CreateQuery, err error) Cypher {
 }
 
 func (q *QueryBuilder) Where(cb ConditionOperator) Cypher {
-	if cb == nil{
+	if cb == nil {
 		q.addError(errors.New("condition builder can not be nil"))
 		return q
 	}
 
 	w, err := cb.Build()
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -116,12 +116,12 @@ func (q *QueryBuilder) Where(cb ConditionOperator) Cypher {
 }
 
 func (q *QueryBuilder) Merge(mergeConf *MergeConfig) Cypher {
-	if mergeConf == nil{
+	if mergeConf == nil {
 		q.addError(errors.New("mergeConf can not be nil"))
 		return q
 	}
 	cypher, err := mergeConf.ToString()
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -133,7 +133,7 @@ func (q *QueryBuilder) Merge(mergeConf *MergeConfig) Cypher {
 
 func (q *QueryBuilder) Return(distinct bool, parts ...ReturnPart) Cypher {
 	str, err := NewReturnClause(distinct, parts...)
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -144,7 +144,7 @@ func (q *QueryBuilder) Return(distinct bool, parts ...ReturnPart) Cypher {
 
 func (q *QueryBuilder) Delete(detach bool, params ...string) Cypher {
 	cypher, err := deleteToString(detach, params...)
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -154,16 +154,16 @@ func (q *QueryBuilder) Delete(detach bool, params ...string) Cypher {
 }
 
 func (q *QueryBuilder) Set(sets ...SetConfig) Cypher {
-	if len(sets) == 0{
+	if len(sets) == 0 {
 		q.addError(errors.New("sets can not be empty"))
 		return q
 	}
 
 	query := "SET"
 
-	for _, setStmt := range sets{
+	for _, setStmt := range sets {
 		str, err := setStmt.ToString()
-		if err != nil{
+		if err != nil {
 			q.addError(err)
 			return q
 		}
@@ -176,15 +176,15 @@ func (q *QueryBuilder) Set(sets ...SetConfig) Cypher {
 }
 
 func (q *QueryBuilder) Remove(removes ...RemoveConfig) Cypher {
-	if len(removes) == 0{
+	if len(removes) == 0 {
 		q.addError(errors.New("removes can not be empty"))
 	}
 
 	query := "REMOVE"
 
-	for _, remove := range removes{
+	for _, remove := range removes {
 		str, err := remove.ToString()
-		if err != nil{
+		if err != nil {
 			q.addError(err)
 			return q
 		}
@@ -195,16 +195,16 @@ func (q *QueryBuilder) Remove(removes ...RemoveConfig) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
-	if len(orderBys) == 0{
+func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher {
+	if len(orderBys) == 0 {
 		q.addError(errors.New("removes can not be empty"))
 	}
 
 	query := "ORDER BY"
 
-	for _, orders := range orderBys{
+	for _, orders := range orderBys {
 		str, err := orders.ToString()
-		if err != nil{
+		if err != nil {
 			q.addError(err)
 			return q
 		}
@@ -215,24 +215,24 @@ func (q *QueryBuilder) OrderBy(orderBys ...OrderByConfig) Cypher{
 	return q
 }
 
-func (q *QueryBuilder) Limit(num int) Cypher{
+func (q *QueryBuilder) Limit(num int) Cypher {
 	q.addNext(fmt.Sprintf("LIMIT %v", num))
 	return q
 }
 
-func (q *QueryBuilder) Skip(num int) Cypher{
+func (q *QueryBuilder) Skip(num int) Cypher {
 	q.addNext(fmt.Sprintf("SKIP %v", num))
 	return q
 }
 
-func (q *QueryBuilder) With(conf *WithConfig) Cypher{
-	if conf == nil{
+func (q *QueryBuilder) With(conf *WithConfig) Cypher {
+	if conf == nil {
 		q.addError(errors.New("conf can not be nil on With"))
 		return q
 	}
 
 	str, err := conf.ToString()
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -241,14 +241,14 @@ func (q *QueryBuilder) With(conf *WithConfig) Cypher{
 	return q
 }
 
-func (q *QueryBuilder) Unwind(unwind *UnwindConfig) Cypher{
-	if unwind == nil{
+func (q *QueryBuilder) Unwind(unwind *UnwindConfig) Cypher {
+	if unwind == nil {
 		q.addError(errors.New("unwind config cannot be nil"))
 		return q
 	}
 
 	str, err := unwind.ToString()
-	if err != nil{
+	if err != nil {
 		q.addError(err)
 		return q
 	}
@@ -257,7 +257,7 @@ func (q *QueryBuilder) Unwind(unwind *UnwindConfig) Cypher{
 	return q
 }
 
-func (q *QueryBuilder) Union(all bool) Cypher{
+func (q *QueryBuilder) Union(all bool) Cypher {
 	query := "UNION"
 
 	if all {
@@ -268,7 +268,7 @@ func (q *QueryBuilder) Union(all bool) Cypher{
 	return q
 }
 
-func (q *QueryBuilder) Cypher(c string) Cypher{
+func (q *QueryBuilder) Cypher(c string) Cypher {
 	q.addNext(c)
 	return q
 }
@@ -290,12 +290,12 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 	}
 
 	query, err := q.build()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	//init map to empty if its nil
-	if params == nil{
+	if params == nil {
 		params = map[string]interface{}{}
 	}
 
@@ -304,20 +304,20 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 	return q.conn.QueryNeo(query, params)
 }
 
-func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
+func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error) {
 	if q.conn == nil {
 		return nil, errors.New("connection not specified")
 	}
 
 	query, err := q.build()
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	log.Println(query)
 
 	//init map to empty if its nil
-	if params == nil{
+	if params == nil {
 		params = map[string]interface{}{}
 	}
 
@@ -326,15 +326,15 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error){
 	return q.conn.ExecNeo(query, params)
 }
 
-func (q *QueryBuilder) ToCypher() (string, error){
+func (q *QueryBuilder) ToCypher() (string, error) {
 	return q.build()
 }
 
-func (q *QueryBuilder) build() (string, error){
+func (q *QueryBuilder) build() (string, error) {
 	//fail if errors are found
-	if q.hasErrors(){
+	if q.hasErrors() {
 		str := "errors found: "
-		for _, err := range q.errors{
+		for _, err := range q.errors {
 			str += err.Error() + ";"
 		}
 
@@ -342,7 +342,7 @@ func (q *QueryBuilder) build() (string, error){
 		return "", errors.New(str)
 	}
 
-	if q.Start == nil || q.Current == nil{
+	if q.Start == nil || q.Current == nil {
 		return "", errors.New("no nodes were added")
 	}
 
@@ -351,7 +351,7 @@ func (q *QueryBuilder) build() (string, error){
 	cur := q.Start
 
 	for {
-		if cur == nil{
+		if cur == nil {
 			break
 		}
 
@@ -363,33 +363,33 @@ func (q *QueryBuilder) build() (string, error){
 	return strings.TrimSuffix(query, " "), nil
 }
 
-func (q *QueryBuilder) AddToPreparedStatement(params map[string]interface{}) error{
+func (q *QueryBuilder) AddToPreparedStatement(params map[string]interface{}) error {
 	query, err := q.build()
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
-	if q.preparedStatements == nil{
+	if q.preparedStatements == nil {
 		q.preparedStatements = []stmt{}
 	}
 
 	q.preparedStatements = append(q.preparedStatements, stmt{
-		Query: query,
+		Query:  query,
 		Params: params,
 	})
 
 	return nil
 }
 
-func (q *QueryBuilder) ExecutePreparedStatements() ([]neo.Result, error){
-	if q.preparedStatements == nil || len(q.preparedStatements) == 0{
+func (q *QueryBuilder) ExecutePreparedStatements() ([]neo.Result, error) {
+	if q.preparedStatements == nil || len(q.preparedStatements) == 0 {
 		return nil, errors.New("no statements are prepared")
 	}
 
 	var queries []string
 	var params []map[string]interface{}
 
-	for _, statement := range q.preparedStatements{
+	for _, statement := range q.preparedStatements {
 		queries = append(queries, statement.Query)
 		params = append(params, statement.Params)
 	}

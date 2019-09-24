@@ -12,7 +12,7 @@ func TestRemoveConfig_ToString(t *testing.T) {
 
 	//test field
 	t1 := RemoveConfig{
-		Name: "n",
+		Name:  "n",
 		Field: "f",
 	}
 	cypher, err = t1.ToString()
@@ -21,7 +21,7 @@ func TestRemoveConfig_ToString(t *testing.T) {
 
 	//test label
 	t2 := RemoveConfig{
-		Name: "n",
+		Name:   "n",
 		Labels: []string{"f"},
 	}
 	cypher, err = t2.ToString()
@@ -30,7 +30,7 @@ func TestRemoveConfig_ToString(t *testing.T) {
 
 	//test many labels
 	t3 := RemoveConfig{
-		Name: "n",
+		Name:   "n",
 		Labels: []string{"1", "2"},
 	}
 	cypher, err = t3.ToString()
@@ -45,8 +45,8 @@ func TestRemoveConfig_ToString(t *testing.T) {
 	//error label and field
 	e2 := RemoveConfig{
 		Labels: []string{"dfd"},
-		Name: "dafd",
-		Field: "dasd",
+		Name:   "dafd",
+		Field:  "dasd",
 	}
 	_, err = e2.ToString()
 	req.NotNil(err)
