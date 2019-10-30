@@ -12,6 +12,8 @@ github.com/mindstand/golang-neo4j-bolt-driver v0.0.0-20190917210539-9477821dd010
 github.com/mindstand/golang-neo4j-bolt-driver v0.0.0-20190917210539-9477821dd010/go.mod h1:SJGjyfk/mgTjbZOn3dHrpA3IqB5M1jTF0nsnh3dFXpM=
 github.com/mindstand/golang-neo4j-bolt-driver v0.0.0-20190925190017-eca83d3ce35c h1:6jP0r3PDFjQgvcCKTCVsIFO40giVse1/Btj7BFlVg6U=
 github.com/mindstand/golang-neo4j-bolt-driver v0.0.0-20190925190017-eca83d3ce35c/go.mod h1:SJGjyfk/mgTjbZOn3dHrpA3IqB5M1jTF0nsnh3dFXpM=
+github.com/mindstand/golang-neo4j-bolt-driver v0.0.0-20191030200006-d15c1c182165 h1:r3B25jDadcUDN6QfyDhLpQ4Offefy1DtDHpxbiqq+m8=
+github.com/mindstand/golang-neo4j-bolt-driver v0.0.0-20191030200006-d15c1c182165/go.mod h1:SJGjyfk/mgTjbZOn3dHrpA3IqB5M1jTF0nsnh3dFXpM=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.4.2 h1:SPIRibHv4MatM3XXNO2BJeFLZwZ2LvZgfQ5+UNI2im4=
