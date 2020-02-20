@@ -19,7 +19,7 @@ type QueryBuilder struct {
 
 	preparedStatements []stmt
 
-	conn connection.IConnection
+	conn connection.IQuery
 }
 
 func QB() *QueryBuilder {
@@ -273,7 +273,7 @@ func (q *QueryBuilder) Cypher(c string) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) WithNeo(conn connection.IConnection) Cypher {
+func (q *QueryBuilder) WithNeo(conn connection.IQuery) Cypher {
 	if conn == nil {
 		q.addError(errors.New("connection can not be nil"))
 		return q
