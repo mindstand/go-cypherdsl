@@ -13,6 +13,8 @@ github.com/mindstand/go-bolt v0.1.0 h1:vucS3SSmAZLD83v7JQNbboBaLh5BrCMhs+WZDfvmc
 github.com/mindstand/go-bolt v0.1.0/go.mod h1:il2Q3ukfionGT1M6cqxfUDKSNhJFGiKu9VFz/i3Q+28=
 github.com/mindstand/go-bolt v0.1.1-0.20200218154318-476bb5db6f06 h1:rWNGuCXZ1SJgteyNTDoVBJ9FeFu/RKYuXY/fqC++5Ng=
 github.com/mindstand/go-bolt v0.1.1-0.20200218154318-476bb5db6f06/go.mod h1:il2Q3ukfionGT1M6cqxfUDKSNhJFGiKu9VFz/i3Q+28=
+github.com/mindstand/go-bolt v0.1.1-0.20200220211224-6d380467d65f h1:40FtI6LlIYl7VtacIc4kj6PVwQig0BkebLLNiYslaGE=
+github.com/mindstand/go-bolt v0.1.1-0.20200220211224-6d380467d65f/go.mod h1:il2Q3ukfionGT1M6cqxfUDKSNhJFGiKu9VFz/i3Q+28=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.4.2 h1:SPIRibHv4MatM3XXNO2BJeFLZwZ2LvZgfQ5+UNI2im4=
