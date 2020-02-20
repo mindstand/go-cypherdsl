@@ -11,6 +11,8 @@ github.com/konsorten/go-windows-terminal-sequences v1.0.2 h1:DB17ag19krx9CFsz4o3
 github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/mindstand/go-bolt v0.1.0 h1:vucS3SSmAZLD83v7JQNbboBaLh5BrCMhs+WZDfvmcRs=
 github.com/mindstand/go-bolt v0.1.0/go.mod h1:il2Q3ukfionGT1M6cqxfUDKSNhJFGiKu9VFz/i3Q+28=
+github.com/mindstand/go-bolt v0.1.1-0.20200218154318-476bb5db6f06 h1:rWNGuCXZ1SJgteyNTDoVBJ9FeFu/RKYuXY/fqC++5Ng=
+github.com/mindstand/go-bolt v0.1.1-0.20200218154318-476bb5db6f06/go.mod h1:il2Q3ukfionGT1M6cqxfUDKSNhJFGiKu9VFz/i3Q+28=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirupsen/logrus v1.4.2 h1:SPIRibHv4MatM3XXNO2BJeFLZwZ2LvZgfQ5+UNI2im4=
