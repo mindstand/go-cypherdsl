@@ -111,4 +111,3 @@ func RowsTo2dStringArray(data [][]interface{}) ([][]string, error) {
 		return [][]string{}, nil
 	}
 }
-
