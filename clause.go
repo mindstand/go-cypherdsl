@@ -97,7 +97,7 @@ type CustomCypher interface {
 
 type QueryCompleter interface {
 	WithNeo(conn connection.IQuery) Cypher
-	Query(params map[string]interface{}) (connection.IRows, error)
+	Query(params map[string]interface{}) ([][]interface{}, error)
 	Exec(params map[string]interface{}) (connection.IResult, error)
 	ToCypher() (string, error)
 }

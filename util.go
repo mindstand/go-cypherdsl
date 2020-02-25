@@ -3,7 +3,6 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	"github.com/mindstand/go-bolt/connection"
 	"reflect"
 	"strings"
 )
@@ -62,12 +61,7 @@ func cypherizeInterface(i interface{}) (string, error) {
 	return "", errors.New("invalid type " + k.String())
 }
 
-func RowsToStringArray(rows connection.IRows) ([]string, error) {
-	data, _, err := rows.All()
-	if err != nil {
-		return nil, err
-	}
-
+func RowsToStringArray(data [][]interface{}) ([]string, error) {
 	//check to make sure its not empty
 	if data == nil || len(data) == 0 || len(data[0]) == 0 {
 		return []string{}, nil
@@ -95,12 +89,7 @@ func RowsToStringArray(rows connection.IRows) ([]string, error) {
 	return toReturn, nil
 }
 
-func RowsTo2dStringArray(rows connection.IRows) ([][]string, error) {
-	data, _, err := rows.All()
-	if err != nil {
-		return nil, err
-	}
-
+func RowsTo2dStringArray(data [][]interface{}) ([][]string, error) {
 	if len(data) != 0 && len(data[0]) != 0 {
 		toReturn := make([][]string, len(data))
 
@@ -117,13 +106,9 @@ func RowsTo2dStringArray(rows connection.IRows) ([][]string, error) {
 				}
 			}
 		}
-		return toReturn, rows.Close()
+		return toReturn, nil
 	} else {
 		return [][]string{}, nil
 	}
 }
 
-func RowsTo2DInterfaceArray(rows connection.IRows) ([][]interface{}, error) {
-	data, _, err := rows.All()
-	return data, err
-}

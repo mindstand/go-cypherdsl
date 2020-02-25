@@ -284,7 +284,7 @@ func (q *QueryBuilder) WithNeo(conn connection.IQuery) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Query(params map[string]interface{}) (connection.IRows, error) {
+func (q *QueryBuilder) Query(params map[string]interface{}) ([][]interface{}, error) {
 	if q.conn == nil {
 		return nil, errors.New("connection not specified")
 	}
@@ -301,7 +301,12 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (connection.IRows, e
 
 	log.Debugf("Executing '%s' with params '%v'", query, params)
 
-	return q.conn.Query(query, params)
+	rows, _, err := q.conn.Query(query, params)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }
 
 func (q *QueryBuilder) Exec(params map[string]interface{}) (connection.IResult, error) {
