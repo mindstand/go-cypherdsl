@@ -22,6 +22,8 @@ github.com/mindstand/go-bolt v0.2.1-0.20200225171020-0494fb808e58 h1:2zBrWg0ROoQ
 github.com/mindstand/go-bolt v0.2.1-0.20200225171020-0494fb808e58/go.mod h1:il2Q3ukfionGT1M6cqxfUDKSNhJFGiKu9VFz/i3Q+28=
 github.com/mindstand/go-bolt v0.2.1-0.20200403154109-13dfac44bd7c h1:XvvXtgyN6vvQdxfCO/q3cwwB/GaeVYlDXYqxLYW+BKs=
 github.com/mindstand/go-bolt v0.2.1-0.20200403154109-13dfac44bd7c/go.mod h1:vKRG3w5kcwmaU0SdKkclBLpD1b30vSp6NK6LqFt1Jbw=
+github.com/mindstand/go-bolt v0.2.1-0.20200409142854-5475f24ef430 h1:m0AT2u4MQfi1QiZjwVt53L/6Het9FPR0tmZR95ue1zo=
+github.com/mindstand/go-bolt v0.2.1-0.20200409142854-5475f24ef430/go.mod h1:vKRG3w5kcwmaU0SdKkclBLpD1b30vSp6NK6LqFt1Jbw=
 github.com/mindstand/gotime v0.0.0-20200331222447-3e483f8772ad h1:IZBIhrFwHEaHaovDckibcb4BnmleV+bThhgqTdxdyt0=
 github.com/mindstand/gotime v0.0.0-20200331222447-3e483f8772ad/go.mod h1:tjuCQXcJcbEuxBdqnrpD8J/trzgyekIYeGLH59l7oZI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
