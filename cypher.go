@@ -3,7 +3,7 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	neo "github.com/mindstand/golang-neo4j-bolt-driver"
+	"github.com/mindstand/go-bolt/connection"
 	"strings"
 )
 
@@ -19,7 +19,7 @@ type QueryBuilder struct {
 
 	preparedStatements []stmt
 
-	conn *neo.BoltConn
+	conn connection.IQuery
 }
 
 func QB() *QueryBuilder {
@@ -273,7 +273,7 @@ func (q *QueryBuilder) Cypher(c string) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) WithNeo(conn *neo.BoltConn) Cypher {
+func (q *QueryBuilder) WithNeo(conn connection.IQuery) Cypher {
 	if conn == nil {
 		q.addError(errors.New("connection can not be nil"))
 		return q
@@ -284,7 +284,7 @@ func (q *QueryBuilder) WithNeo(conn *neo.BoltConn) Cypher {
 	return q
 }
 
-func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
+func (q *QueryBuilder) Query(params map[string]interface{}) ([][]interface{}, error) {
 	if q.conn == nil {
 		return nil, errors.New("connection not specified")
 	}
@@ -301,10 +301,15 @@ func (q *QueryBuilder) Query(params map[string]interface{}) (neo.Rows, error) {
 
 	log.Debugf("Executing '%s' with params '%v'", query, params)
 
-	return q.conn.QueryNeo(query, params)
+	rows, _, err := q.conn.Query(query, params)
+	if err != nil {
+		return nil, err
+	}
+
+	return rows, nil
 }
 
-func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error) {
+func (q *QueryBuilder) Exec(params map[string]interface{}) (connection.IResult, error) {
 	if q.conn == nil {
 		return nil, errors.New("connection not specified")
 	}
@@ -321,7 +326,7 @@ func (q *QueryBuilder) Exec(params map[string]interface{}) (neo.Result, error) {
 
 	log.Debugf("Executing '%s' with params '%v'", query, params)
 
-	return q.conn.ExecNeo(query, params)
+	return q.conn.Exec(query, params)
 }
 
 func (q *QueryBuilder) ToCypher() (string, error) {
@@ -359,38 +364,4 @@ func (q *QueryBuilder) build() (string, error) {
 	}
 
 	return strings.TrimSuffix(query, " "), nil
-}
-
-func (q *QueryBuilder) AddToPreparedStatement(params map[string]interface{}) error {
-	query, err := q.build()
-	if err != nil {
-		return err
-	}
-
-	if q.preparedStatements == nil {
-		q.preparedStatements = []stmt{}
-	}
-
-	q.preparedStatements = append(q.preparedStatements, stmt{
-		Query:  query,
-		Params: params,
-	})
-
-	return nil
-}
-
-func (q *QueryBuilder) ExecutePreparedStatements() ([]neo.Result, error) {
-	if q.preparedStatements == nil || len(q.preparedStatements) == 0 {
-		return nil, errors.New("no statements are prepared")
-	}
-
-	var queries []string
-	var params []map[string]interface{}
-
-	for _, statement := range q.preparedStatements {
-		queries = append(queries, statement.Query)
-		params = append(params, statement.Params)
-	}
-
-	return q.conn.ExecPipeline(queries, params...)
 }

@@ -1,6 +1,8 @@
 package go_cypherdsl
 
-import neo "github.com/mindstand/golang-neo4j-bolt-driver"
+import (
+	"github.com/mindstand/go-bolt/connection"
+)
 
 type Cypher interface {
 	Match
@@ -94,10 +96,8 @@ type CustomCypher interface {
 }
 
 type QueryCompleter interface {
-	WithNeo(conn *neo.BoltConn) Cypher
-	Query(params map[string]interface{}) (neo.Rows, error)
-	Exec(params map[string]interface{}) (neo.Result, error)
+	WithNeo(conn connection.IQuery) Cypher
+	Query(params map[string]interface{}) ([][]interface{}, error)
+	Exec(params map[string]interface{}) (connection.IResult, error)
 	ToCypher() (string, error)
-	AddToPreparedStatement(params map[string]interface{}) error
-	ExecutePreparedStatements() ([]neo.Result, error)
 }
