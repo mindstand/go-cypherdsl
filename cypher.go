@@ -3,7 +3,6 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
-	"github.com/mindstand/go-bolt/connection"
 	"strings"
 )
 
@@ -18,8 +17,6 @@ type QueryBuilder struct {
 	errors  []error
 
 	preparedStatements []stmt
-
-	conn connection.IQuery
 }
 
 func QB() *QueryBuilder {
@@ -271,62 +268,6 @@ func (q *QueryBuilder) Union(all bool) Cypher {
 func (q *QueryBuilder) Cypher(c string) Cypher {
 	q.addNext(c)
 	return q
-}
-
-func (q *QueryBuilder) WithNeo(conn connection.IQuery) Cypher {
-	if conn == nil {
-		q.addError(errors.New("connection can not be nil"))
-		return q
-	}
-
-	q.conn = conn
-
-	return q
-}
-
-func (q *QueryBuilder) Query(params map[string]interface{}) ([][]interface{}, error) {
-	if q.conn == nil {
-		return nil, errors.New("connection not specified")
-	}
-
-	query, err := q.build()
-	if err != nil {
-		return nil, err
-	}
-
-	//init map to empty if its nil
-	if params == nil {
-		params = map[string]interface{}{}
-	}
-
-	log.Debugf("Executing '%s' with params '%v'", query, params)
-
-	rows, _, err := q.conn.Query(query, params)
-	if err != nil {
-		return nil, err
-	}
-
-	return rows, nil
-}
-
-func (q *QueryBuilder) Exec(params map[string]interface{}) (connection.IResult, error) {
-	if q.conn == nil {
-		return nil, errors.New("connection not specified")
-	}
-
-	query, err := q.build()
-	if err != nil {
-		return nil, err
-	}
-
-	//init map to empty if its nil
-	if params == nil {
-		params = map[string]interface{}{}
-	}
-
-	log.Debugf("Executing '%s' with params '%v'", query, params)
-
-	return q.conn.Exec(query, params)
 }
 
 func (q *QueryBuilder) ToCypher() (string, error) {

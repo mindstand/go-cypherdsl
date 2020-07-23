@@ -1,9 +1,5 @@
 package go_cypherdsl
 
-import (
-	"github.com/mindstand/go-bolt/connection"
-)
-
 type Cypher interface {
 	Match
 	OptionalMatch
@@ -96,8 +92,5 @@ type CustomCypher interface {
 }
 
 type QueryCompleter interface {
-	WithNeo(conn connection.IQuery) Cypher
-	Query(params map[string]interface{}) ([][]interface{}, error)
-	Exec(params map[string]interface{}) (connection.IResult, error)
 	ToCypher() (string, error)
 }
