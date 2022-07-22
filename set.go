@@ -3,6 +3,7 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 type SetOperation string
@@ -120,7 +121,9 @@ func (s *SetConfig) ToString() (string, error) {
 	//validate target node combo
 	if s.Member == "" && (s.Target != nil || s.TargetFunction != nil) {
 		//cant do this kind of operation directly on a node
-		return "", errors.New("can only set node equal to a map")
+		if reflect.TypeOf(s.Target) != reflect.TypeOf(ParamString("")) {
+			return "", errors.New("can only set node equal to a map")
+		}
 	}
 
 	if s.Member != "" {

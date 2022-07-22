@@ -3,6 +3,7 @@ package go_cypherdsl
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 )
 
@@ -52,11 +53,18 @@ func (p *Params) ToCypherMap() string {
 		return "{}"
 	}
 
-	q := ""
+	// Create and sort a slice of keys to ensure cypher queries are created with consistent ordering
+	keys := make([]string, 0, len(p.params))
+	for k, _ := range p.params {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
 
-	for _, v := range p.params {
-		q += fmt.Sprintf("%s,", v)
+	var sb strings.Builder
+
+	for _, k := range keys {
+		sb.WriteString(fmt.Sprintf("%s,", p.params[k]))
 	}
 
-	return "{" + strings.TrimSuffix(q, ",") + "}"
+	return "{" + strings.TrimSuffix(sb.String(), ",") + "}"
 }

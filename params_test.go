@@ -11,6 +11,7 @@ func TestParams(t *testing.T) {
 		"val2": int(1),
 		"val3": true,
 		"val4": float64(43.444),
+		"val5": FuncString("datetime.realtime()"),
 	})
 	require.Nil(t, err)
 	require.NotNil(t, params)
@@ -19,6 +20,7 @@ func TestParams(t *testing.T) {
 	require.Contains(t, params.ToCypherMap(), "val1:'string'")
 	require.Contains(t, params.ToCypherMap(), "val2:1")
 	require.Contains(t, params.ToCypherMap(), "val3:true")
+	require.Contains(t, params.ToCypherMap(), "val5:datetime.realtime()")
 
 	//error test
 	err = params.Set("val", struct {

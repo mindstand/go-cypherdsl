@@ -53,6 +53,12 @@ func (p *ParamString) ToString() string {
 	return string(*p)
 }
 
+type FuncString string
+
+func (p *FuncString) ToString() string {
+	return string(*p)
+}
+
 type FunctionConfig struct {
 	Name   string
 	Params []interface{}

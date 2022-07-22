@@ -73,6 +73,16 @@ func TestSetConfig_ToString(t *testing.T) {
 	req.Nil(err)
 	req.EqualValues("f.t = 1", cypher)
 
+	//check set target to param string
+	t6 := &SetConfig{
+		Operation: SetEqualTo,
+		Target:    ParamString("$props"),
+		Name:      "f",
+	}
+	cypher, err = t6.ToString()
+	req.Nil(err)
+	req.EqualValues("f = $props", cypher)
+
 	//error - name not defined
 	e1 := &SetConfig{}
 	_, err = e1.ToString()

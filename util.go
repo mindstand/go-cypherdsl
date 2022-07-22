@@ -21,6 +21,11 @@ func cypherizeInterface(i interface{}) (string, error) {
 		return string(s), nil
 	}
 
+	if t == reflect.TypeOf(FuncString("")) {
+		s := i.(FuncString)
+		return string(s), nil
+	}
+
 	//check string
 	if k == reflect.String {
 		return fmt.Sprintf("'%s'", i.(string)), nil
